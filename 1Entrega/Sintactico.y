@@ -2,9 +2,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <string.h>
 #include "y.tab.h"
 int yystopparser=0;
 FILE  *yyin;
+FILE* pf_TS;
+ typedef struct{
+        int posicion;
+        char nombre[30];
+        char tipo[20];
+        char valor[100];
+        int longitud;
+        } TS_reg;
+    
+ TS_reg tabla_simb[100];
+
+char listaDeTipos[][100]={"."};
+char listaDeIDs[][100]={"."};
+
+int cant_entradaSint = 0;
+int cantidadTipos=0;              
+int cantidadIDs=0;     
+char* yytext;
+
+
+void agregarTipo(char * );
+void agregarIDs(char * );
+
+
+int busca_en_TSinta(char*);
+int graba_TSinta();
+int inserta_TSinta(char*,char*);
+
 
 %}
 
@@ -52,11 +81,11 @@ declaraciones:
 declaracion:  
            lista_var PCOMA type 
            ;
-type: REAL | STRING
+type: REAL{agregarTipo(yytext);} | STRING{agregarTipo(yytext);}
 
 lista_var:  
-   ID
-   | lista_var COMA ID  
+   ID {agregarIDs(yytext); }
+   | lista_var COMA ID  {agregarIDs(yytext); }
    ;
 
 bloque:          {printf(" Inicia BLOQUE\n");} sentencia | bloque sentencia ;
@@ -118,10 +147,89 @@ int main(int argc,char *argv[])
   return 0;
 }
 
-int yyerror(void)
-     {
-       printf("Syntax Error\n");
-	 system ("Pause");
-	 exit (1);
-     }
+int yyerror(char const *line)
+{
+  printf("Syntax Error\n");   
+  exit (1);
+}
 
+/**********************TIPO y IDS***************************/
+void agregarTipo(char * tipo)
+{
+  strcpy(listaDeTipos[cantidadTipos],tipo);
+  cantidadTipos++;
+}
+
+void agregarIDs(char * idValue)
+{
+  strcpy(listaDeIDs[cantidadIDs],idValue);
+  cantidadIDs++;
+  printf("IDDDDDDDDDDDDDDDD==== %s\n",idValue);
+  inserta_TSinta("ID", idValue);
+}
+
+
+
+//Buscamos que no la hayamos guardado
+int busca_en_TSinta(char* nombre)
+{
+    int i;
+    for(i = 0; i<cant_entradaSint; i++)
+    {
+          if(!strcmp(tabla_simb[i].nombre, nombre))
+          {
+                 return i;
+          }
+    }
+    
+    return -1;
+}
+
+
+int inserta_TSinta(char* tipo,char* valor)
+{
+   if((yylval = busca_en_TSinta(yytext)) == -1)
+     {
+    TS_reg reg;
+    strcpy(reg.nombre, yytext);
+    strcpy(reg.tipo, tipo);
+    strcpy(reg.valor, valor);
+    reg.longitud = strlen(yytext);
+    reg.posicion = cant_entradaSint;
+    tabla_simb[cant_entradaSint++] = reg;
+    
+    return yylval = cant_entradaSint-1;
+   }
+   return yylval;
+}
+
+int graba_TSinta()
+{
+     printf("GRABA EN TS");
+     int i;
+     char* TS_file = "ts11.txt";
+     
+     if((pf_TS = fopen(TS_file, "w")) == NULL)
+     {
+               printf("Error al grabar la tabla de simbolos \n");
+               exit(1);
+     }
+     
+     fprintf(pf_TS, "POSICION \t\t NOMBRE \t\t TIPO \t\t VALOR \t\t LONGITUD \n");
+     
+      for(i = 0; i < cant_entradaSint; i++)
+      {
+           fprintf(pf_TS,"%d \t\t\t\t %s \t\t\t", tabla_simb[i].posicion, tabla_simb[i].nombre);
+           
+          
+            if(tabla_simb[i].tipo != NULL)
+               fprintf(pf_TS,"%s \t\t\t", tabla_simb[i].tipo);
+           
+          
+            if(tabla_simb[i].valor != NULL)
+               fprintf(pf_TS,"%s \t\t\t", tabla_simb[i].valor);
+           
+            fprintf(pf_TS,"%d \n", tabla_simb[i].longitud);
+      }    
+     fclose(pf_TS);
+}
