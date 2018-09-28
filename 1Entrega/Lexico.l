@@ -71,7 +71,7 @@ OP_NOT       ["NOT"]
 "OR"			{ return OP_LOG;}
 "NOT"           { return OP_NOT;}
 ":"				{ return PCOMA;}
-{ID}			{  inserta_TS("ID","---");  return ID; }
+{ID}			{ return ID; }
 {CONST_STR}		{  
 					if(!validar_longitud_string(yytext)) { 
 	          yyterminate(); 
