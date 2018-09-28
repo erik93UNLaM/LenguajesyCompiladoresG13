@@ -1,0 +1,49 @@
+program  
+DECVAR
+ ls, n : REAL
+ cadena, s : STRING
+ENDDEC
+-/etse es un-/  -/ /-    /-omentario /-
+
+
+ls:=6.5	
+ls:="HOLA"
+i:=2.3
+a:=4294
+li:=.5
+peso:="f"
+BETWEEN(a,[3.4:5 + b])
+AVG([5 + b,a,5.6])
+
+WRITE "dar"
+WRITE "21"
+READ a
+
+if a<7 then
+
+	i:=1.6
+else
+	while a<7
+		i:=5 + b
+	endw
+
+endif
+
+if a<7 AND a<4 then
+
+	i:=1.6
+
+endif
+if a<7 OR a<4 then
+
+	i:=1.6
+
+endif
+
+if NOT a<7  then
+
+	i:=1.6
+
+endif
+
+endp
