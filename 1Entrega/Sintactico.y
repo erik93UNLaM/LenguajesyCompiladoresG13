@@ -69,7 +69,7 @@ programa: PROGRAM {printf(" Inicia COMPILADOR\n");} est_declaracion bloque ENDP
 	{printf(" Fin COMPILADOR ok\n");};
 
 est_declaracion:
-	DECVAR {printf("     DECLARACIONES\n");} declaraciones ENDDEC {printf(" Fin de las Declaraciones\n");}
+	DECVAR {printf("     DECLARACIONES\n");} declaraciones ENDDEC {printf(" Fin de las Declaraciones\n"); graba_TSinta();}
         ; 
 
 
@@ -137,7 +137,7 @@ int main(int argc,char *argv[])
 {
   if ((yyin = fopen(argv[1], "rt")) == NULL)
   {
-	printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
+	printf("\n \n \n \n \n \nNo se puede abrir el archivo: %s\n \n  \n  \n \n \n \n \n \n ", argv[1]);
   }
   else
   {
@@ -205,13 +205,15 @@ int inserta_TSinta(char* tipo,char* valor)
 
 int graba_TSinta()
 {
-     printf("GRABA EN TS");
+    printf("\n******************************************************************************************************************************************************************\n");
+     printf("\n GRABA EN TS \n");
+     printf("\n******************************************************************************************************************************************************************\n");
      int i;
-     char* TS_file = "ts11.txt";
+     char* TS_file = "ts.txt";
      
      if((pf_TS = fopen(TS_file, "w")) == NULL)
      {
-               printf("Error al grabar la tabla de simbolos \n");
+               printf("\nE \nE \nE \nE \nE \nE \nE \nE Error al grabar la tabla de simbolos \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE ");
                exit(1);
      }
      

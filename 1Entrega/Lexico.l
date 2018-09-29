@@ -181,14 +181,15 @@ int graba_TS()
      int i;
      char* TS_file = "ts.txt";
      
-     if((pf_TS = fopen(TS_file, "w")) == NULL)
+     if((pf_TS = fopen(TS_file, "a+")) == NULL)
      {
                printf("Error al grabar la tabla de simbolos \n");
                exit(1);
      }
      
-     fprintf(pf_TS, "POSICION \t\t NOMBRE \t\t TIPO \t\t VALOR \t\t LONGITUD \n");
-     
+
+  
+      
       for(i = 0; i < cant_entradas; i++)
       {
            fprintf(pf_TS,"%d \t\t\t\t %s \t\t\t", tabla_simb[i].posicion, tabla_simb[i].nombre);

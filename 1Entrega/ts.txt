@@ -1,4 +1,8 @@
 POSICION 		 NOMBRE 		 TIPO 		 VALOR 		 LONGITUD 
+0 				 ls 			ID 			ls 			2 
+1 				 n 			ID 			n 			1 
+2 				 cadena 			ID 			cadena 			6 
+3 				 s 			ID 			s 			1 
 0 				 6.5 			CONST_REAL 			6.5 			3 
 1 				 "HOLA" 			CONST_STR 			"HOLA" 			6 
 2 				 2.3 			CONST_REAL 			2.3 			3 
