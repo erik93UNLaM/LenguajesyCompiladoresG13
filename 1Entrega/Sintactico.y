@@ -31,6 +31,7 @@ void agregarIDs(char * );
 
 
 int busca_en_TSinta(char*);
+void busca_Var_Existe(char*);
 int graba_TSinta();
 int inserta_TSinta(char*,char*);
 
@@ -105,7 +106,7 @@ listaexpresiones: expresion
 
 ciclow:         WHILE condicion{ printf("     CONDICION DEL WHILE\n");}bloque ENDW ;
 
-asignacion: ID OP_AS expresion {printf("    ASIGNACION\n");};
+asignacion: ID{busca_Var_Existe(yytext);} OP_AS expresion {printf("    ASIGNACION\n");};
 
 
 seleccion: 
@@ -127,7 +128,7 @@ termino:
        factor | termino OP_MULTDIV factor ;
 
 factor: 
-      ID 
+      ID {busca_Var_Existe(yytext);}
       | CONST_REAL
       | CONST_STR  
       ;
@@ -170,7 +171,7 @@ void agregarIDs(char * idValue)
 
 
 
-//Buscamos que no la hayamos guardado
+//Buscamos si fue creada la variable
 int busca_en_TSinta(char* nombre)
 {
     int i;
@@ -184,7 +185,21 @@ int busca_en_TSinta(char* nombre)
     
     return -1;
 }
-
+//Buscamos si fue creada la variable para usarla
+void busca_Var_Existe(char* var)
+{
+    int i;
+    for(i = 0; i<cant_entradaSint; i++)
+    {
+          if(strcmp(tabla_simb[i].nombre, var))
+          {
+            printf("Variable no declarada: %s\n\n", var);
+            yyerror(var);
+          }
+    }
+    
+  
+}
 
 int inserta_TSinta(char* tipo,char* valor)
 {
@@ -205,9 +220,7 @@ int inserta_TSinta(char* tipo,char* valor)
 
 int graba_TSinta()
 {
-    printf("\n******************************************************************************************************************************************************************\n");
-     printf("\n GRABA EN TS \n");
-     printf("\n******************************************************************************************************************************************************************\n");
+    
      int i;
      char* TS_file = "ts.txt";
      
