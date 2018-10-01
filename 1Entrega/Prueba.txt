@@ -1,20 +1,19 @@
 program  
 DECVAR
- ls, n : REAL
- cadena, s : STRING
+ ls, n, i, a, b, li: REAL
+ cadena, s, peso: STRING
 ENDDEC
 -/etse es un-/  -/ /-    /-omentario /-
 
 
 ls:=6.5	
-ls:="HOLA"
 i:=2.3
 a:=4294
 li:=.5
 peso:="f"
-BETWEEN(a,[3.4:5 + b])
-AVG([5 + b,a,5.6])
 
+AVG([5 + b,a,5.6])
+BETWEEN(a,[3.4:5 + b])
 WRITE "dar"
 WRITE "21"
 READ a

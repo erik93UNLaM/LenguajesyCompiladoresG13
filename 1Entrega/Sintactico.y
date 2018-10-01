@@ -187,16 +187,21 @@ int busca_en_TSinta(char* nombre)
 }
 //Buscamos si fue creada la variable para usarla
 void busca_Var_Existe(char* var)
-{
-    int i;
+{int i;
+printf("-----------------------------Entra a buscar variables declaradas----------------------------------\n");
+printf("VAR:%s\n",var);
+    
     for(i = 0; i<cant_entradaSint; i++)
     {
-          if(strcmp(tabla_simb[i].nombre, var))
+      printf("Orden: %i - Tabla:%s - Variable%s \n", i,tabla_simb[i].valor, var );
+          if(!strcmp(tabla_simb[i].nombre, var))
           {
-            printf("Variable no declarada: %s\n\n", var);
-            yyerror(var);
+            printf("Tabla:%s",tabla_simb[i].nombre);
+            return;
           }
     }
+    printf("Variable no declarada: %s\n\n", var);
+            yyerror(var);
     
   
 }
