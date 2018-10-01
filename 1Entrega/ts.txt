@@ -8,3 +8,16 @@ POSICION 		 NOMBRE 		 TIPO 		 VALOR 		 LONGITUD
 6 				 cadena 			ID 			cadena 			6 
 7 				 s 			ID 			s 			1 
 8 				 peso 			ID 			peso 			4 
+0 				 6.5 			CONST_REAL 			6.5 			3 
+1 				 2.3 			CONST_REAL 			2.3 			3 
+2 				 4294 			CONST_REAL 			4294 			4 
+3 				 .5 			CONST_REAL 			.5 			2 
+4 				 "f" 			CONST_STR 			"f" 			3 
+5 				 5 			CONST_REAL 			5 			1 
+6 				 5.6 			CONST_REAL 			5.6 			3 
+7 				 3.4 			CONST_REAL 			3.4 			3 
+8 				 "dar" 			CONST_STR 			"dar" 			5 
+9 				 "21" 			CONST_STR 			"21" 			4 
+10 				 7 			CONST_REAL 			7 			1 
+11 				 1.6 			CONST_REAL 			1.6 			3 
+12 				 4 			CONST_REAL 			4 			1 

@@ -15,7 +15,7 @@ FILE* pf_TS;
         int longitud;
         } TS_reg;
     
- TS_reg tabla_simb[100];
+ TS_reg tabla_simbSinta[100];
 
 char listaDeTipos[][100]={"."};
 char listaDeIDs[][100]={"."};
@@ -106,7 +106,7 @@ listaexpresiones: expresion
 
 ciclow:         WHILE condicion{ printf("     CONDICION DEL WHILE\n");}bloque ENDW ;
 
-asignacion: ID{busca_Var_Existe(yytext);} OP_AS expresion {printf("    ASIGNACION\n");};
+asignacion: ID OP_AS expresion {printf("    ASIGNACION\n");};
 
 
 seleccion: 
@@ -177,7 +177,7 @@ int busca_en_TSinta(char* nombre)
     int i;
     for(i = 0; i<cant_entradaSint; i++)
     {
-          if(!strcmp(tabla_simb[i].nombre, nombre))
+          if(!strcmp(tabla_simbSinta[i].nombre, nombre))
           {
                  return i;
           }
@@ -193,10 +193,10 @@ printf("VAR:%s\n",var);
     
     for(i = 0; i<cant_entradaSint; i++)
     {
-      printf("Orden: %i - Tabla:%s - Variable%s \n", i,tabla_simb[i].valor, var );
-          if(!strcmp(tabla_simb[i].nombre, var))
+      printf("Orden: %i - Tabla:%s - Variable%s \n", i,tabla_simbSinta[i].valor, var );
+          if(!strcmp(tabla_simbSinta[i].nombre, var))
           {
-            printf("Tabla:%s",tabla_simb[i].nombre);
+            printf("Tabla:%s",tabla_simbSinta[i].nombre);
             return;
           }
     }
@@ -216,7 +216,7 @@ int inserta_TSinta(char* tipo,char* valor)
     strcpy(reg.valor, valor);
     reg.longitud = strlen(yytext);
     reg.posicion = cant_entradaSint;
-    tabla_simb[cant_entradaSint++] = reg;
+    tabla_simbSinta[cant_entradaSint++] = reg;
     
     return yylval = cant_entradaSint-1;
    }
@@ -239,17 +239,17 @@ int graba_TSinta()
      
       for(i = 0; i < cant_entradaSint; i++)
       {
-           fprintf(pf_TS,"%d \t\t\t\t %s \t\t\t", tabla_simb[i].posicion, tabla_simb[i].nombre);
+           fprintf(pf_TS,"%d \t\t\t\t %s \t\t\t", tabla_simbSinta[i].posicion, tabla_simbSinta[i].nombre);
            
           
-            if(tabla_simb[i].tipo != NULL)
-               fprintf(pf_TS,"%s \t\t\t", tabla_simb[i].tipo);
+            if(tabla_simbSinta[i].tipo != NULL)
+               fprintf(pf_TS,"%s \t\t\t", tabla_simbSinta[i].tipo);
            
           
-            if(tabla_simb[i].valor != NULL)
-               fprintf(pf_TS,"%s \t\t\t", tabla_simb[i].valor);
+            if(tabla_simbSinta[i].valor != NULL)
+               fprintf(pf_TS,"%s \t\t\t", tabla_simbSinta[i].valor);
            
-            fprintf(pf_TS,"%d \n", tabla_simb[i].longitud);
+            fprintf(pf_TS,"%d \n", tabla_simbSinta[i].longitud);
       }    
      fclose(pf_TS);
 }

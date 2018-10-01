@@ -1,7 +1,7 @@
 program  
 DECVAR
- ls, n, i, a, b, li: REAL
- cadena, s, peso: STRING
+ ls, n, ls,i, a, b, li: REAL
+ cadena, s,a, peso: STRING
 ENDDEC
 -/etse es un-/  -/ /-    /-omentario /-
 
