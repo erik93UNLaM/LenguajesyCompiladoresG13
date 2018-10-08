@@ -153,7 +153,6 @@ int busca_en_TS(char* nombre)
     {
           if(!strcmp(tabla_simb[i].nombre, nombre))
           {
-            printf("y la posicion es:%d \n",i);
                  return i;
           }
     }

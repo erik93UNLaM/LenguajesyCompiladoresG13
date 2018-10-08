@@ -1,13 +1,4 @@
-POSICION 		 NOMBRE 		 TIPO 		 VALOR 		 LONGITUD 
-0 				 ls 			ID 			ls 			2 
-1 				 n 			ID 			n 			1 
-2 				 i 			ID 			i 			1 
-3 				 a 			ID 			a 			1 
-4 				 b 			ID 			b 			1 
-5 				 li 			ID 			li 			2 
-6 				 cadena 			ID 			cadena 			6 
-7 				 s 			ID 			s 			1 
-8 				 peso 			ID 			peso 			4 
+POSICION 			 NOMBRE 		 TIPO 		 VALOR 		 LONGITUD 
 0 				 6.5 			CONST_REAL 			6.5 			3 
 1 				 2.3 			CONST_REAL 			2.3 			3 
 2 				 4294 			CONST_REAL 			4294 			4 
