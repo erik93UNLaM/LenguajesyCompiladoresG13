@@ -4,6 +4,9 @@
 #include <conio.h>
 #include <string.h>
 #include "y.tab.h"
+
+#define TERCETOS "intermedia.txt"
+
 int yystopparser=0;
 FILE  *yyin;
 FILE* pf_TS;
@@ -35,8 +38,36 @@ void busca_Var_Existe(char*);
 int graba_TSinta();
 int inserta_TSinta(char*,char*);
 
+// TERCETO DECLARACIONES
+typedef struct terceto{
+  char* operacion;
+  int t1, t2;
+  int numeroTerceto;
+} t_terceto;
+
+//Variables para tercetos
+t_terceto  asignacion_terceto,
+      expresion_terceto, 
+      termino_terceto, 
+      factor_terceto, 
+      concatenacion_terceto,
+      factor_terceto_aux,
+      expresion_terceto_aux,
+      condicion_terceto;
+t_terceto *vectorTercetos;
+int indiceTerceto = 0;
+
+
+t_terceto crearTerceto(char*,int,int);
+void mostrarTerceto(t_terceto terceto);
 
 %}
+
+%union {
+  int intval;
+  double doubleval;
+  char *str_val;
+}
 
 %token PROGRAM
 %token ENDP
@@ -70,7 +101,9 @@ programa: PROGRAM {printf(" Inicia COMPILADOR\n");} est_declaracion bloque ENDP
 	{printf(" Fin COMPILADOR ok\n");};
 
 est_declaracion:
-	DECVAR {printf("     DECLARACIONES\n");} declaraciones ENDDEC {printf(" Fin de las Declaraciones\n"); graba_TSinta();}
+	DECVAR {printf("     DECLARACIONES\n");} declaraciones ENDDEC {printf(" Fin de las Declaraciones\n"); 
+                                                                  graba_TSinta();
+                                                                  }
         ; 
 
 
@@ -106,7 +139,13 @@ listaexpresiones: expresion
 
 ciclow:         WHILE condicion{ printf("     CONDICION DEL WHILE\n");}bloque ENDW ;
 
-asignacion: ID OP_AS expresion {printf("    ASIGNACION\n");};
+asignacion: ID OP_AS expresion {
+              printf("    ASIGNACION\n");
+              printf("La variable recuperada es : %s\n",$<str_val>1);
+              t_terceto tAux = crearTerceto($<str_val>1,-1,-1); 
+              crearTerceto($<str_val>2, tAux.numeroTerceto, expresion_terceto.numeroTerceto);
+              //mostrarTerceto(tAux);
+            };
 
 
 seleccion: 
@@ -122,13 +161,20 @@ condicion:
 comparacion:  expresion OP_COMPARACION expresion | reglabetween  ;
 
 expresion:
-         termino | expresion OP_SURES termino;
+         termino {expresion_terceto = termino_terceto;} | expresion OP_SURES termino;
 
 termino: 
-       factor | termino OP_MULTDIV factor ;
+       factor {termino_terceto = factor_terceto;}
+       | termino OP_MULTDIV factor 
+        {termino_terceto = crearTerceto($<str_val>2, termino_terceto.numeroTerceto, factor_terceto.numeroTerceto);} 
+        ;
 
 factor: 
-      ID {busca_Var_Existe(yytext);}
+      ID {
+          //busca_Var_Existe(yytext);
+          printf("LLEGO EL LEXEMA DEL ID  : %s\n",$<str_val>1);
+          factor_terceto = crearTerceto($<str_val>1,-1,-1);
+          }
       | CONST_REAL
       | CONST_STR  
       ;
@@ -142,6 +188,8 @@ int main(int argc,char *argv[])
   }
   else
   {
+  //TERCETO
+  //openFile(TERCETOS, &intermedia);
 	yyparse();
   }
   fclose(yyin);
@@ -208,8 +256,8 @@ printf("VAR:%s\n",var);
 
 int inserta_TSinta(char* tipo,char* valor)
 {
-   if((yylval = busca_en_TSinta(yytext)) == -1)
-     {
+   if((busca_en_TSinta(yytext)) == -1)
+     //{
     TS_reg reg;
     strcpy(reg.nombre, yytext);
     strcpy(reg.tipo, tipo);
@@ -218,9 +266,10 @@ int inserta_TSinta(char* tipo,char* valor)
     reg.posicion = cant_entradaSint;
     tabla_simbSinta[cant_entradaSint++] = reg;
     
-    return yylval = cant_entradaSint-1;
+    return cant_entradaSint-1;
    }
-   return yylval;
+   //return yylval;
+
 }
 
 int graba_TSinta()
@@ -235,7 +284,7 @@ int graba_TSinta()
                exit(1);
      }
      
-     fprintf(pf_TS, "POSICION \t\t NOMBRE \t\t TIPO \t\t VALOR \t\t LONGITUD \n");
+     fprintf(pf_TS, "POSICION \t\t\t NOMBRE \t\t TIPO \t\t VALOR \t\t LONGITUD \n");
      
       for(i = 0; i < cant_entradaSint; i++)
       {
@@ -252,4 +301,29 @@ int graba_TSinta()
             fprintf(pf_TS,"%d \n", tabla_simbSinta[i].longitud);
       }    
      fclose(pf_TS);
+}
+
+
+//TERCETOS
+//Crea el terceto con los indices de los tercetos. Si no existen tiene -1
+t_terceto crearTerceto(char* operacion,int t1,int t2){
+  t_terceto result;
+  result.operacion = operacion;
+  result.t1 = t1;
+  result.t2 = t2;
+  //t_terceto *aux = buscarTerceto(result);
+  //if(indiceTerceto > 0 && aux != NULL){
+    //result = *aux;
+  //}
+  //else{   
+    result.numeroTerceto = indiceTerceto++;
+    vectorTercetos = (t_terceto*) realloc(vectorTercetos, sizeof(t_terceto) * indiceTerceto);
+    vectorTercetos[indiceTerceto-1] = result;
+  //}
+  return result;
+}
+
+//Muestra el Terceto
+void mostrarTerceto(t_terceto t){
+  printf("terceto de operacion: [%d] %d %s %d\n", t.numeroTerceto, t.t1, t.operacion, t.t2);
 }

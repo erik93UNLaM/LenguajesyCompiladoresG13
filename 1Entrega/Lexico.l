@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <string.h>
+#include <assert.h>
 #include "y.tab.h"
 FILE  *yyin;
-int yylval;
-float yyfval; 
+//int yylval;
+//float yyfval; 
 typedef struct{
       int posicion;
       char nombre[30];
@@ -56,7 +57,8 @@ OP_NOT       ["NOT"]
 "endif"	      	{ return ENDIF;}
 "while"			{return WHILE;}
 "endw"  		{ return ENDW;}
-":="			{ return OP_AS;}
+":="			{ yylval.str_val = strdup(yytext); 
+            return OP_AS;}
 "+"				{ return OP_SURES;}
 "-"				{ return OP_SURES;}
 "*"				{ return OP_MULTDIV;}
@@ -146,10 +148,12 @@ int validar_cota_real()
 int busca_en_TS(char* nombre)
 {
     int i;
+
     for(i = 0; i<cant_entradas; i++)
     {
           if(!strcmp(tabla_simb[i].nombre, nombre))
           {
+            printf("y la posicion es:%d \n",i);
                  return i;
           }
     }
@@ -160,8 +164,8 @@ int busca_en_TS(char* nombre)
 
 int inserta_TS(char* tipo,char* valor)
 {
-   if((yylval = busca_en_TS(yytext)) == -1)
-     {
+   if(busca_en_TS(yytext) == -1)
+    {
     TS_reg reg;
     strcpy(reg.nombre, yytext);
     strcpy(reg.tipo, tipo);
@@ -170,9 +174,8 @@ int inserta_TS(char* tipo,char* valor)
     reg.posicion = cant_entradas;
     tabla_simb[cant_entradas++] = reg;
     
-    return yylval = cant_entradas-1;
+    return cant_entradas-1;
    }
-   return yylval;
 }
 
 int graba_TS()
@@ -181,15 +184,12 @@ int graba_TS()
      int i;
      char* TS_file = "ts.txt";
      
-     if((pf_TS = fopen(TS_file, "a+")) == NULL)
+     if((pf_TS = fopen(TS_file, "w+")) == NULL)
      {
                printf("Error al grabar la tabla de simbolos \n");
                exit(1);
      }
-     
-
-  
-      
+      fprintf(pf_TS, "POSICION \t\t\t NOMBRE \t\t TIPO \t\t VALOR \t\t LONGITUD \n");
       for(i = 0; i < cant_entradas; i++)
       {
            fprintf(pf_TS,"%d \t\t\t\t %s \t\t\t", tabla_simb[i].posicion, tabla_simb[i].nombre);
