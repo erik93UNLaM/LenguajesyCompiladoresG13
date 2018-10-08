@@ -73,11 +73,12 @@ OP_NOT       ["NOT"]
 "OR"			{ return OP_LOG;}
 "NOT"           { return OP_NOT;}
 ":"				{ return PCOMA;}
-{ID}			{ return ID; }
+{ID}			{ yylval.str_val = strdup(yytext); return ID; }
 {CONST_STR}		{  
 					if(!validar_longitud_string(yytext)) { 
 	          yyterminate(); 
 	        }
+          yylval.str_val = strdup(yytext); 
           inserta_TS("CONST_STR",yytext);
 					return CONST_STR;
 				}
@@ -85,7 +86,8 @@ OP_NOT       ["NOT"]
 {CONST_REAL}	{ 
                 if(!validar_cota_real()){
                   yyterminate(); 
-                } 
+                }
+                yylval.doubleval = atof(yytext); 
                 inserta_TS("CONST_REAL",yytext); 
                 return CONST_REAL;
               }
@@ -183,7 +185,7 @@ int graba_TS()
      int i;
      char* TS_file = "ts.txt";
      
-     if((pf_TS = fopen(TS_file, "w+")) == NULL)
+     if((pf_TS = fopen(TS_file, "w")) == NULL)
      {
                printf("Error al grabar la tabla de simbolos \n");
                exit(1);

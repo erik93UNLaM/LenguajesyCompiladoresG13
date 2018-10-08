@@ -1,49 +1,9 @@
 program  
 DECVAR
- ls, n, ls,i, a, b, li: REAL
- cadena, s,a, peso: STRING
+ ls : REAL
 ENDDEC
--/etse es un-/  -/ /-    /-omentario /-
-
-
-ls:=6.5	
-i:=2.3
-a:=4294
-li:=.5
-peso:="f"
-b:=6.5
-
-AVG([5 + b,a,5.6])
-BETWEEN(a,[3.4:5 + b])
-WRITE "dar"
-WRITE "21"
-READ a
-
-if a<7 then
-
-	i:=1.6
-else
-	while a<7
-		i:=5 + b
-	endw
-
-endif
-
-if a<7 AND a<4 then
-
-	i:=1.6
-
-endif
-if a<7 OR a<4 then
-
-	i:=1.6
-
-endif
-
-if NOT a<7  then
-
-	i:=1.6
-
-endif
+ls := 6.5;
+ls := 7.5;
+ls := 8.5;	
 
 endp

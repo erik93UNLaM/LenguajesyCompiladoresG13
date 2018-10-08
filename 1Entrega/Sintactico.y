@@ -59,7 +59,10 @@ int indiceTerceto = 0;
 
 
 t_terceto crearTerceto(char*,int,int);
+t_terceto* buscarTerceto(t_terceto t);
 void mostrarTerceto(t_terceto terceto);
+void escribirArchivoTercetos();
+void escribirTerceto(t_terceto t1);
 
 %}
 
@@ -98,11 +101,11 @@ void mostrarTerceto(t_terceto terceto);
 
 %%
 programa: PROGRAM {printf(" Inicia COMPILADOR\n");} est_declaracion bloque ENDP   
-	{printf(" Fin COMPILADOR ok\n");};
+	{printf(" Fin COMPILADOR ok\n"); graba_TSinta(); escribirArchivoTercetos(); };
 
 est_declaracion:
 	DECVAR {printf("     DECLARACIONES\n");} declaraciones ENDDEC {printf(" Fin de las Declaraciones\n"); 
-                                                                  graba_TSinta();
+                                                                  
                                                                   }
         ; 
 
@@ -141,9 +144,9 @@ ciclow:         WHILE condicion{ printf("     CONDICION DEL WHILE\n");}bloque EN
 
 asignacion: ID OP_AS expresion {
               printf("    ASIGNACION\n");
-              printf("La variable recuperada es : %s\n",$<str_val>1);
+              printf("La variable recuperada es : %s y el UNO %s y %f\n",yytext , $<str_val>1,$<doubleval>1);
               t_terceto tAux = crearTerceto($<str_val>1,-1,-1); 
-              crearTerceto($<str_val>2, tAux.numeroTerceto, expresion_terceto.numeroTerceto);
+              crearTerceto(":=", tAux.numeroTerceto, expresion_terceto.numeroTerceto);
               //mostrarTerceto(tAux);
             };
 
@@ -166,17 +169,23 @@ expresion:
 termino: 
        factor {termino_terceto = factor_terceto;}
        | termino OP_MULTDIV factor 
-        {termino_terceto = crearTerceto($<str_val>2, termino_terceto.numeroTerceto, factor_terceto.numeroTerceto);} 
+        {termino_terceto = crearTerceto(yytext, termino_terceto.numeroTerceto, factor_terceto.numeroTerceto);} 
         ;
 
 factor: 
       ID {
           //busca_Var_Existe(yytext);
-          printf("LLEGO EL LEXEMA DEL ID  : %s\n",$<str_val>1);
-          factor_terceto = crearTerceto($<str_val>1,-1,-1);
+          printf("LLEGO EL LEXEMA DEL ID  : %s\n",yytext);
+          factor_terceto = crearTerceto(yytext,-1,-1);
           }
-      | CONST_REAL
+      | CONST_REAL {
+          printf("PASO UNA CONSTANTE REAL %s O EL DOUBLE:  %f\n", yytext, $<doubleval>1);
+          factor_terceto = crearTerceto("FLOAT",-1,-1);
+          }
       | CONST_STR  
+          {
+          printf("PASO UNA CONSTANTE STRING ");
+          }
       ;
 
 %%
@@ -250,8 +259,6 @@ printf("VAR:%s\n",var);
     }
     printf("Variable no declarada: %s\n\n", var);
             yyerror(var);
-    
-  
 }
 
 int inserta_TSinta(char* tipo,char* valor)
@@ -268,8 +275,6 @@ int inserta_TSinta(char* tipo,char* valor)
     
     return cant_entradaSint-1;
    }
-   //return yylval;
-
 }
 
 int graba_TSinta()
@@ -278,7 +283,7 @@ int graba_TSinta()
      int i;
      char* TS_file = "ts.txt";
      
-     if((pf_TS = fopen(TS_file, "w")) == NULL)
+     if((pf_TS = fopen(TS_file, "a+")) == NULL)
      {
                printf("\nE \nE \nE \nE \nE \nE \nE \nE Error al grabar la tabla de simbolos \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE ");
                exit(1);
@@ -313,7 +318,7 @@ t_terceto crearTerceto(char* operacion,int t1,int t2){
   result.t2 = t2;
   //t_terceto *aux = buscarTerceto(result);
   //if(indiceTerceto > 0 && aux != NULL){
-    //result = *aux;
+   // result = *aux;
   //}
   //else{   
     result.numeroTerceto = indiceTerceto++;
@@ -326,4 +331,38 @@ t_terceto crearTerceto(char* operacion,int t1,int t2){
 //Muestra el Terceto
 void mostrarTerceto(t_terceto t){
   printf("terceto de operacion: [%d] %d %s %d\n", t.numeroTerceto, t.t1, t.operacion, t.t2);
+}
+
+
+//Busca un terceto en el vector de tercetos
+t_terceto* buscarTerceto(t_terceto t){
+  int i;
+  for (i = 0; i < indiceTerceto; ++i) 
+    if(strcmp(vectorTercetos[i].operacion, t.operacion) == 0 && vectorTercetos[i].t1 == -1 && vectorTercetos[i].t2 == -1)
+      return &(vectorTercetos[i]); 
+  return NULL;
+}
+
+//Escribe todos los Tercetos
+void escribirArchivoTercetos(){
+  int i;
+  for(i = 0; i < indiceTerceto; i++)
+    escribirTerceto(vectorTercetos[i]);
+}
+
+//Escribe un terceto en el archivo
+void escribirTerceto(t_terceto t){
+  printf("terceto a escribir en archivo:");
+  mostrarTerceto(t);
+  FILE* arch = fopen(TERCETOS, "a+");
+  if(strcmp(t.operacion, "BI")==0)
+    fprintf(arch, "[%d] (%s, [%d], -)\n", t.numeroTerceto, t.operacion, t.t2);
+  else if(t.t1 == -1 && t.t2 == -1)
+    fprintf(arch, "[%d] (%s, _, _)\n", t.numeroTerceto, t.operacion);
+  else if(t.t2 == -1)
+    fprintf(arch, "[%d] (%s, [%d], _)\n", t.numeroTerceto, t.operacion, t.t1);
+  else
+    fprintf(arch, "[%d] (%s, [%d], [%d])\n", t.numeroTerceto, t.operacion, t.t1, t.t2);
+  //printf("[%d] (%s, [%d])", t.numeroTerceto, t.operacion, t.(*t1).numeroTerceto); 
+  fclose(arch);
 }
