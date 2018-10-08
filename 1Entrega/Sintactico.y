@@ -257,7 +257,7 @@ printf("VAR:%s\n",var);
 int inserta_TSinta(char* tipo,char* valor)
 {
    if((busca_en_TSinta(yytext)) == -1)
-     //{
+     {
     TS_reg reg;
     strcpy(reg.nombre, yytext);
     strcpy(reg.tipo, tipo);
