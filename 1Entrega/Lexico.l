@@ -87,7 +87,7 @@ OP_NOT       ["NOT"]
                 if(!validar_cota_real()){
                   yyterminate(); 
                 }
-                yylval.doubleval = atof(yytext); 
+                yylval.doubleval = strdup(yytext); 
                 inserta_TS("CONST_REAL",yytext); 
                 return CONST_REAL;
               }

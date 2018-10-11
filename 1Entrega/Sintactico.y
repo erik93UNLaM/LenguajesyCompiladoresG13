@@ -68,7 +68,7 @@ void escribirTerceto(t_terceto t1);
 
 %union {
   int intval;
-  double doubleval;
+  char * doubleval;
   char *str_val;
 }
 
@@ -179,8 +179,10 @@ factor:
           factor_terceto = crearTerceto(yytext,-1,-1);
           }
       | CONST_REAL {
-          printf("PASO UNA CONSTANTE REAL %s O EL DOUBLE:  %f\n", yytext, $<doubleval>1);
-          factor_terceto = crearTerceto("FLOAT",-1,-1);
+          
+          printf("PASO UNA CONSTANTE REAL %s O EL DOUBLE:  %s\n", yytext, $<doubleval>1);
+          factor_terceto = crearTerceto($<doubleval>1,-1,-1);
+          
           }
       | CONST_STR  
           {
