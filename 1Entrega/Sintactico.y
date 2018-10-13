@@ -27,7 +27,7 @@ int cant_entradaSint = 0;
 int cantidadTipos=0;              
 int cantidadIDs=0;     
 char* yytext;
-
+char stringVarAux[5];
 
 void agregarTipo(char * );
 void agregarIDs(char * );
@@ -40,7 +40,7 @@ int inserta_TSinta(char*,char*);
 
 // TERCETO DECLARACIONES
 typedef struct terceto{
-  char* operacion;
+  char* operacion[5];
   int t1, t2;
   int numeroTerceto;
 } t_terceto;
@@ -163,8 +163,8 @@ condicion:
 	 ;
 
 comparacion:  expresion{expresion_terceto_aux = expresion_terceto;}
-         OP_COMPARACION expresion {
-       crearTerceto("CMP", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);
+         OP_COMPARACION{strcpy(stringVarAux,yytext);}  expresion {
+       crearTerceto(stringVarAux, expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);
         }| reglabetween  ;
 
 expresion:
@@ -172,10 +172,8 @@ expresion:
 
 termino: 
        factor {termino_terceto = factor_terceto;}
-       | termino OP_MULTDIV factor 
-        {
-        termino_terceto = crearTerceto("*/", termino_terceto.numeroTerceto, factor_terceto.numeroTerceto);
-        } 
+       | termino OP_MULTDIV{strcpy(stringVarAux,yytext);} 
+          factor{termino_terceto = crearTerceto(stringVarAux, termino_terceto.numeroTerceto, factor_terceto.numeroTerceto);} 
         ;
 
 factor: 
@@ -320,7 +318,7 @@ int graba_TSinta()
 //Crea el terceto con los indices de los tercetos. Si no existen tiene -1
 t_terceto crearTerceto(char* operacion,int t1,int t2){
   t_terceto result;
-  result.operacion = operacion;
+  strcpy(result.operacion, operacion);
   result.t1 = t1;
   result.t2 = t2;
   //t_terceto *aux = buscarTerceto(result);

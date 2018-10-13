@@ -4,11 +4,11 @@ DECVAR
 ENDDEC
 
 
-b := 8.5 / 3 ;
+b := 8.5 * 3 ;
 a := b;
 
-if li > 5 then
-	li := 3.2 * 5;	
+if li < 5 then
+	li := 3.2 / 5;	
 endif
 
 ENDP
