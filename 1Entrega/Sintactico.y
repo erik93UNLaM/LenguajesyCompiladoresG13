@@ -131,7 +131,10 @@ sentencia:      ciclow| seleccion | asignacion | teclado | reglaaverage
 
 teclado:        READ ID | WRITE CONST_STR | WRITE ID ;
 
-reglabetween:    BETWEEN P_A expresion COMA C_A expresion PCOMA expresion C_C P_C;
+reglabetween:   BETWEEN{} P_A 
+                expresion{expresion_terceto_aux = expresion_terceto;} COMA C_A 
+                expresion{crearTerceto(">=", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);} PCOMA 
+                expresion{crearTerceto("<=", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);} C_C P_C;
 
 
 
@@ -163,12 +166,15 @@ condicion:
 	 ;
 
 comparacion:  expresion{expresion_terceto_aux = expresion_terceto;}
-         OP_COMPARACION{strcpy(stringVarAux,yytext);}  expresion {
-       crearTerceto(stringVarAux, expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);
-        }| reglabetween  ;
+         OP_COMPARACION{strcpy(stringVarAux,yytext);}  expresion 
+         {crearTerceto(stringVarAux, expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);}
+        | reglabetween  ;
 
 expresion:
-         termino {expresion_terceto = termino_terceto;} | expresion OP_SURES termino
+         termino {expresion_terceto = termino_terceto;} 
+         |  expresion {expresion_terceto = termino_terceto;} 
+            OP_SURES {strcpy(stringVarAux,yytext);} 
+            termino {expresion_terceto = crearTerceto(stringVarAux, expresion_terceto.numeroTerceto, termino_terceto.numeroTerceto);} 
 
 termino: 
        factor {termino_terceto = factor_terceto;}
