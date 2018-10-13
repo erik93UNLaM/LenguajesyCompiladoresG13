@@ -53,6 +53,7 @@ t_terceto  asignacion_terceto,
       concatenacion_terceto,
       factor_terceto_aux,
       expresion_terceto_aux,
+      expresion_between_aux,
       condicion_terceto;
 t_terceto *vectorTercetos;
 int indiceTerceto = 0;
@@ -133,8 +134,9 @@ teclado:        READ ID | WRITE CONST_STR | WRITE ID ;
 
 reglabetween:   BETWEEN{} P_A 
                 expresion{expresion_terceto_aux = expresion_terceto;} COMA C_A 
-                expresion{crearTerceto(">=", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);} PCOMA 
-                expresion{crearTerceto("<=", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);} C_C P_C;
+                expresion{expresion_between_aux = crearTerceto(">=", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);} PCOMA 
+                expresion{crearTerceto("==",expresion_between_aux.numeroTerceto,crearTerceto("<=", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto).numeroTerceto);
+                          } C_C P_C;
 
 
 

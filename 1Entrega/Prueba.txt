@@ -3,10 +3,6 @@ DECVAR
  li,a,b : REAL
 ENDDEC
 
-b := 8.5 * 3 ;
-a := b;
-
-
 if BETWEEN(a,[3.4:5 + b]) then
 	li := 3.2 / 5;	
 endif
