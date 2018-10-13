@@ -127,7 +127,7 @@ lista_var:
 
 bloque:          {printf(" Inicia BLOQUE\n");} sentencia | bloque sentencia ;
 
-sentencia:      ciclow | seleccion | asignacion | teclado | reglabetween| reglaaverage;
+sentencia:      ciclow | seleccion | asignacion | teclado | reglaaverage;
 
 teclado:        READ ID | WRITE CONST_STR | WRITE ID ;
 
