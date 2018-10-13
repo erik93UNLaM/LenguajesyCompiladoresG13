@@ -25,7 +25,7 @@ typedef struct{
 DIGITO				[0-9] 
 LETRA				[a-zA-Z]
 COMA                [","]
-PCOMA               [":"] 
+PCOMA               [";"] 
 CONST_STR           \"({LETRA}|{DIGITO}|.)+\" 
 COMENTARIOS         \-\/({LETRA}|{DIGITO}|.)+\/\-
 CONST_REAL          {DIGITO}*"."{DIGITO}*|{DIGITO}*
@@ -41,8 +41,8 @@ OP_NOT       ["NOT"]
 
 
 %%
-"program"		{ return PROGRAM;}
-"endp"      { graba_TS(); return ENDP; }
+"PROGRAM"		{ return PROGRAM;}
+"ENDP"      { graba_TS(); return ENDP; }
 "DECVAR"		{ return DECVAR; }
 "ENDDEC"		{ return ENDDEC;}
 "WRITE"			{ return WRITE;}

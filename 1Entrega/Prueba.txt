@@ -1,9 +1,14 @@
-program  
+PROGRAM  
 DECVAR
- ls : REAL
+ li,a,b : REAL
 ENDDEC
-ls := 6.5;
-ls := 7.5;
-ls := 8.5;	
 
-endp
+
+b := 8.5 / 3 ;
+a := b;
+
+if li > 5 then
+	li := 3.2 * 5;	
+endif
+
+ENDP

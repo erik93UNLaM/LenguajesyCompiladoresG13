@@ -127,7 +127,7 @@ lista_var:
 
 bloque:          {printf(" Inicia BLOQUE\n");} sentencia | bloque sentencia ;
 
-sentencia:      ciclow | seleccion | asignacion | teclado | reglaaverage;
+sentencia:      ciclow| seleccion | asignacion | teclado | reglaaverage
 
 teclado:        READ ID | WRITE CONST_STR | WRITE ID ;
 
@@ -143,12 +143,13 @@ listaexpresiones: expresion
 ciclow:         WHILE condicion{ printf("     CONDICION DEL WHILE\n");}bloque ENDW ;
 
 asignacion: ID OP_AS expresion {
-              printf("    ASIGNACION\n");
-              printf("La variable recuperada es : %s y el UNO %s y %f\n",yytext , $<str_val>1,$<doubleval>1);
+              busca_Var_Existe($<str_val>1);
+              //printf("    ASIGNACION\n");
+              //printf("La variable recuperada es : %s y el UNO %s y %f\n",yytext , $<str_val>1,$<doubleval>1);
               t_terceto tAux = crearTerceto($<str_val>1,-1,-1); 
               crearTerceto(":=", tAux.numeroTerceto, expresion_terceto.numeroTerceto);
               //mostrarTerceto(tAux);
-            };
+            }
 
 
 seleccion: 
@@ -161,22 +162,27 @@ condicion:
          | OP_NOT comparacion
 	 ;
 
-comparacion:  expresion OP_COMPARACION expresion | reglabetween  ;
+comparacion:  expresion{expresion_terceto_aux = expresion_terceto;}
+         OP_COMPARACION expresion {
+       crearTerceto("CMP", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);
+        }| reglabetween  ;
 
 expresion:
-         termino {expresion_terceto = termino_terceto;} | expresion OP_SURES termino;
+         termino {expresion_terceto = termino_terceto;} | expresion OP_SURES termino
 
 termino: 
        factor {termino_terceto = factor_terceto;}
        | termino OP_MULTDIV factor 
-        {termino_terceto = crearTerceto(yytext, termino_terceto.numeroTerceto, factor_terceto.numeroTerceto);} 
+        {
+        termino_terceto = crearTerceto("*/", termino_terceto.numeroTerceto, factor_terceto.numeroTerceto);
+        } 
         ;
 
 factor: 
       ID {
           //busca_Var_Existe(yytext);
           printf("LLEGO EL LEXEMA DEL ID  : %s\n",yytext);
-          factor_terceto = crearTerceto(yytext,-1,-1);
+          factor_terceto = crearTerceto($<str_val>1,-1,-1);
           }
       | CONST_REAL {
           
@@ -193,6 +199,8 @@ factor:
 %%
 int main(int argc,char *argv[])
 {
+  fflush(stdout);
+
   if ((yyin = fopen(argv[1], "rt")) == NULL)
   {
 	printf("\n \n \n \n \n \nNo se puede abrir el archivo: %s\n \n  \n  \n \n \n \n \n \n ", argv[1]);
@@ -224,7 +232,6 @@ void agregarIDs(char * idValue)
 {
   strcpy(listaDeIDs[cantidadIDs],idValue);
   cantidadIDs++;
-  printf("IDDDDDDDDDDDDDDDD==== %s\n",idValue);
   inserta_TSinta("ID", idValue);
 }
 
@@ -247,15 +254,13 @@ int busca_en_TSinta(char* nombre)
 //Buscamos si fue creada la variable para usarla
 void busca_Var_Existe(char* var)
 {int i;
-printf("-----------------------------Entra a buscar variables declaradas----------------------------------\n");
-printf("VAR:%s\n",var);
     
     for(i = 0; i<cant_entradaSint; i++)
     {
-      printf("Orden: %i - Tabla:%s - Variable%s \n", i,tabla_simbSinta[i].valor, var );
+      
           if(!strcmp(tabla_simbSinta[i].nombre, var))
           {
-            printf("Tabla:%s",tabla_simbSinta[i].nombre);
+            //printf("Encontré: Tabla:%s",tabla_simbSinta[i].nombre);
             return;
           }
     }
