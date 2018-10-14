@@ -137,7 +137,7 @@ int validar_longitud_string(char* texto){
 
 int validar_cota_real()
 {
-	float valor = atof(yytext);
+  double valor = strtod(yytext,NULL);
 	if(valor > 4294967295 || valor < -4294967296)
 	{
 		printf("SINTAX ERROR: REAL OVERFLOW\n");		

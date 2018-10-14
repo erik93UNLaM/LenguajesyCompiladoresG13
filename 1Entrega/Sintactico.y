@@ -21,7 +21,7 @@ FILE* pf_TS;
  TS_reg tabla_simbSinta[100];
 
 char listaDeTipos[][100]={"."};
-char listaDeIDs[][100]={"."};
+int listaDeIDs[100];
 
 int cant_entradaSint = 0;
 int cantidadTipos=0;              
@@ -119,10 +119,11 @@ declaraciones:
              | declaraciones declaracion
            ;
 
-declaracion:  
-           lista_var PCOMA type 
+declaracion: lista_var{printf("lista de var\n");} PCOMA 
+              type{ printf("TIPO\n" );} 
            ;
-type: REAL{agregarTipo(yytext);} | STRING{agregarTipo(yytext);}
+type: REAL{agregarTipo(yytext);
+         } | STRING{agregarTipo(yytext);}
 
 lista_var:  
    ID {agregarIDs(yytext); }
@@ -266,15 +267,21 @@ int yyerror(char const *line)
 /**********************TIPO y IDS***************************/
 void agregarTipo(char * tipo)
 {
-  strcpy(listaDeTipos[cantidadTipos],tipo);
-  cantidadTipos++;
+  for (int i = 0; i < cantidadIDs; i++)
+  {
+   
+    strcpy(tabla_simbSinta[ listaDeIDs[i] ].tipo, tipo);
+    listaDeIDs[i] = 0;
+  }
+  cantidadIDs=0;
+
+
 }
 
 void agregarIDs(char * idValue)
 {
-  strcpy(listaDeIDs[cantidadIDs],idValue);
+  listaDeIDs[cantidadIDs] = inserta_TSinta("ID", idValue);
   cantidadIDs++;
-  inserta_TSinta("ID", idValue);
 }
 
 

@@ -2,12 +2,11 @@ PROGRAM
 
 DECVAR
  li,a,b : REAL
+ str1,str2,str3 : STRING
 
 ENDDEC
 
-a := AVG([4.8,3.2,6.8,7.6+b])	
 
-
-li:= a +AVG([4.8,3.2,6.8,7.6+b])*3+5 
+a := 42949674;
 
 ENDP
