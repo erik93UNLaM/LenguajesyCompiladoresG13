@@ -228,7 +228,7 @@ factor:
           }
       | CONST_REAL {
           
-          printf("PASO UNA CONSTANTE REAL %s O EL DOUBLE:  %s\n", yytext, $<doubleval>1);
+          printf("PASO UNA CONSTANTE REAL %s\n", $<doubleval>1);
           factor_terceto = crearTerceto($<doubleval>1,-1,-1);
           
           }
@@ -391,7 +391,7 @@ t_terceto crearTerceto(char* operacion,int t1,int t2){
 
 //Muestra el Terceto
 void mostrarTerceto(t_terceto t){
-  printf("terceto de operacion: [%d] %d %s %d\n", t.numeroTerceto, t.t1, t.operacion, t.t2);
+  //printf("terceto de operacion: [%d] %d %s %d\n", t.numeroTerceto, t.t1, t.operacion, t.t2);
 }
 
 
@@ -413,7 +413,7 @@ void escribirArchivoTercetos(){
 
 //Escribe un terceto en el archivo
 void escribirTerceto(t_terceto t){
-  printf("terceto a escribir en archivo:");
+  //printf("terceto a escribir en archivo:");
   mostrarTerceto(t);
   FILE* arch = fopen(TERCETOS, "a+");
   if(strcmp(t.operacion, "BI")==0)
