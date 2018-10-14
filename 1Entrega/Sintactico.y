@@ -54,6 +54,9 @@ t_terceto  asignacion_terceto,
       factor_terceto_aux,
       expresion_terceto_aux,
       expresion_between_aux,
+      expresion_sum_terceto,
+      expresion_cont_terceto,
+      expresion_cont_terceto_uno,
       condicion_terceto;
 t_terceto *vectorTercetos;
 int indiceTerceto = 0;
@@ -140,9 +143,41 @@ reglabetween:   BETWEEN{} P_A
 
 
 
-reglaaverage:   AVERAGE P_A C_A listaexpresiones C_C P_C
-listaexpresiones: listaexpresiones COMA expresion
-listaexpresiones: expresion
+reglaaverage:   AVERAGE P_A C_A listaexpresiones C_C P_C { 
+               
+                t_terceto t_div = crearTerceto("/", expresion_sum_terceto.numeroTerceto, expresion_cont_terceto.numeroTerceto);
+                t_terceto t_avg = crearTerceto("avg", -1, -1);
+                crearTerceto("=",t_avg.numeroTerceto,t_div.numeroTerceto);
+
+                }
+listaexpresiones: listaexpresiones COMA expresion {
+                          
+                //Sumamos a Sum y asignamos el valor
+                t_terceto t_suma = crearTerceto("+", expresion_sum_terceto.numeroTerceto, expresion_terceto.numeroTerceto); 
+                crearTerceto("=", expresion_sum_terceto.numeroTerceto, t_suma.numeroTerceto); 
+                
+                //lo asignamos a las estructuras
+                t_terceto t_cont = crearTerceto("+",expresion_cont_terceto.numeroTerceto, expresion_cont_terceto_uno.numeroTerceto);
+                crearTerceto("=",expresion_cont_terceto.numeroTerceto,t_cont.numeroTerceto);
+                
+                } 
+listaexpresiones: expresion  { 
+                  
+                //expresion_terceto_aux = expresion_terceto;
+                //Creo las variables 
+                expresion_sum_terceto = crearTerceto("sum",-1,-1); 
+                expresion_cont_terceto = crearTerceto("cont",-1,-1); 
+
+                //Sumamos a Sum y asignamos el valor
+                t_terceto t_suma = crearTerceto("+", expresion_sum_terceto.numeroTerceto, expresion_terceto.numeroTerceto); 
+                crearTerceto("=", expresion_sum_terceto.numeroTerceto, t_suma.numeroTerceto); 
+                
+                //Creamos el 1 para poder incrementar y lo asignamos a las estructuras
+                expresion_cont_terceto_uno = crearTerceto("1",-1,-1);
+                t_terceto t_cont = crearTerceto("+",expresion_cont_terceto.numeroTerceto, expresion_cont_terceto_uno.numeroTerceto);
+                crearTerceto("=",expresion_cont_terceto.numeroTerceto,t_cont.numeroTerceto);
+                
+                }
 
 
 ciclow:         WHILE condicion{ printf("     CONDICION DEL WHILE\n");}bloque ENDW ;

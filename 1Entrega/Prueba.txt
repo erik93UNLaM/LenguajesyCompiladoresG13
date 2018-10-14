@@ -1,10 +1,13 @@
 PROGRAM  
+
 DECVAR
  li,a,b : REAL
+
 ENDDEC
 
-if BETWEEN(a,[3.4:5 + b]) then
-	li := 3.2 / 5;	
-endif
+
+
+AVG([4.8,3.2,6.8,7.6+b])	
+
 
 ENDP
