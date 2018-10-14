@@ -235,6 +235,7 @@ factor:
           {
           printf("PASO UNA CONSTANTE STRING ");
           }
+      | reglaaverage
       ;
 
 %%
