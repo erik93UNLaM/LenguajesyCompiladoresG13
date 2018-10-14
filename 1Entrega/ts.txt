@@ -1,9 +1,1 @@
 POSICION 			 NOMBRE 		 TIPO 		 VALOR 		 LONGITUD 
-0 				 42949674 			CONST_REAL 			42949674 			8 
-POSICION 			 NOMBRE 		 TIPO 		 VALOR 		 LONGITUD 
-0 				 li 			REAL 			li 			2 
-1 				 a 			REAL 			a 			1 
-2 				 b 			REAL 			b 			1 
-3 				 str1 			STRING 			str1 			4 
-4 				 str2 			STRING 			str2 			4 
-5 				 str3 			STRING 			str3 			4 

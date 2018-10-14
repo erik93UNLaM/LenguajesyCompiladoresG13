@@ -222,7 +222,7 @@ termino:
 
 factor: 
       ID {
-          //busca_Var_Existe(yytext);
+          busca_Var_Existe(yytext);
           printf("LLEGO EL LEXEMA DEL ID  : %s\n",yytext);
           factor_terceto = crearTerceto($<str_val>1,-1,-1);
           }
@@ -309,8 +309,13 @@ void busca_Var_Existe(char* var)
       
           if(!strcmp(tabla_simbSinta[i].nombre, var))
           {
-            //printf("Encontré: Tabla:%s",tabla_simbSinta[i].nombre);
-            return;
+            if(!strcmp(tabla_simbSinta[i].tipo,"REAL")){
+              return;  
+            }else{
+              printf("\n Tipo Incompatible: %s\n", var);
+            yyerror(var);
+            }
+            
           }
     }
     printf("Variable no declarada: %s\n\n", var);

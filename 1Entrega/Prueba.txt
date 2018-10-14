@@ -6,7 +6,8 @@ DECVAR
 
 ENDDEC
 
+a := b+li;
 
-a := 42949674;
+str1 := str2;
 
 ENDP
