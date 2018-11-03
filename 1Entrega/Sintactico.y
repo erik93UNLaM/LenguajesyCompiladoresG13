@@ -40,6 +40,7 @@ int graba_TSinta();
 int inserta_TSinta(char*,char*);
 //grabar archivo assembler
 int grabar_archivo_asm();
+int getCodigo(char* operador);
 
 // TERCETO DECLARACIONES
 typedef struct terceto{
@@ -62,6 +63,7 @@ t_terceto  asignacion_terceto,
       expresion_cont_terceto_uno,
       condicion_terceto;
 t_terceto *vectorTercetos;
+char *vectorVariablesAssembler;
 int indiceTerceto = 0;
 
 
@@ -227,7 +229,7 @@ factor:
       ID {
           busca_Var_Existe(yytext);
           printf("LLEGO EL LEXEMA DEL ID  : %s\n",yytext);
-          factor_terceto = crearTerceto($<str_val>1,-1,-1);
+          factor_terceto = crearTerceto($<str_val>1,-1,-1,"_",$<str_val>1);
           }
       | CONST_REAL {
           
@@ -375,6 +377,27 @@ int graba_TSinta()
 
 //TERCETOS
 //Crea el terceto con los indices de los tercetos. Si no existen tiene -1
+t_terceto crearTerceto(char* operacion,int t1,int t2, char* valor){
+  t_terceto result;
+  strcpy(result.operacion, operacion);
+  result.t1 = t1;
+  result.t2 = t2;
+  //t_terceto *aux = buscarTerceto(result);
+  //if(indiceTerceto > 0 && aux != NULL){
+   // result = *aux;
+  //}
+  //else{   
+    result.numeroTerceto = indiceTerceto++;
+    vectorTercetos = (t_terceto*) realloc(vectorTercetos, sizeof(t_terceto) * indiceTerceto);
+    vectorTercetos[indiceTerceto-1] = result;
+	
+	vectorVariablesAssembler = (char*) realloc(vectorVariablesAssembler, sizeof(char) * indiceTerceto);
+    vectorVariablesAssembler[indiceTerceto-1] = valor
+	
+  //}
+  return result;
+}
+
 t_terceto crearTerceto(char* operacion,int t1,int t2){
   t_terceto result;
   strcpy(result.operacion, operacion);
@@ -388,9 +411,11 @@ t_terceto crearTerceto(char* operacion,int t1,int t2){
     result.numeroTerceto = indiceTerceto++;
     vectorTercetos = (t_terceto*) realloc(vectorTercetos, sizeof(t_terceto) * indiceTerceto);
     vectorTercetos[indiceTerceto-1] = result;
+	
   //}
   return result;
 }
+
 
 //Muestra el Terceto
 void mostrarTerceto(t_terceto t){
@@ -420,13 +445,13 @@ void escribirTerceto(t_terceto t){
   mostrarTerceto(t);
   FILE* arch = fopen(TERCETOS, "a+");
   if(strcmp(t.operacion, "BI")==0)
-    fprintf(arch, "[%d] (%s, [%d], -)\n", t.numeroTerceto, t.operacion, t.t2);
+    fprintf(arch, "[%d] (%s,[%d],-)\n", t.numeroTerceto, t.operacion, t.t2);
   else if(t.t1 == -1 && t.t2 == -1)
-    fprintf(arch, "[%d] (%s, _, _)\n", t.numeroTerceto, t.operacion);
+    fprintf(arch, "[%d] (%s,_,_)\n", t.numeroTerceto, t.operacion);
   else if(t.t2 == -1)
-    fprintf(arch, "[%d] (%s, [%d], _)\n", t.numeroTerceto, t.operacion, t.t1);
+    fprintf(arch, "[%d] (%s,[%d],_)\n", t.numeroTerceto, t.operacion, t.t1);
   else
-    fprintf(arch, "[%d] (%s, [%d], [%d])\n", t.numeroTerceto, t.operacion, t.t1, t.t2);
+    fprintf(arch, "[%d] (%s,[%d],[%d])\n", t.numeroTerceto, t.operacion, t.t1, t.t2);
   //printf("[%d] (%s, [%d])", t.numeroTerceto, t.operacion, t.(*t1).numeroTerceto); 
   fclose(arch);
 }
@@ -459,10 +484,8 @@ int grabar_archivo_asm()
     
 	for(i=0; i<cant_entradaSint; i++)
     {
-	 printf("Aca hay conytenido: %s", tabla_simbSinta[i].nombre);
-      strcpy(aux_cte, tabla_simbSinta[i].nombre); // get_nombre_cte_string_asm(tabla_simbSinta[i].nombre)
-	  printf("----------------El contenido de la materia---- %s",aux_cte);
-      //if(!strcmp(tabla_simb[i].tipo, "CONST_REAL"))
+	  strcpy(aux_cte, tabla_simbSinta[i].nombre); // get_nombre_cte_string_asm(tabla_simbSinta[i].nombre)
+	  //if(!strcmp(tabla_simb[i].tipo, "CONST_REAL"))
       //{
       //  fprintf(pf_asm, "\t_%s dd %s \n", aux_cte, tabla_simb[i].valor);
       //}
@@ -480,6 +503,9 @@ int grabar_archivo_asm()
       }
     }
 	
+	for(i = 0; i < indiceTerceto; i++){
+			getCodigo(vectorTercetos[i]);
+	}
     fprintf(pf_asm2, ".CODE \n");
     fprintf(pf_asm2, "\t mov AX,@DATA \n");
     fprintf(pf_asm2, "\t mov DS,AX \n");
@@ -494,7 +520,38 @@ int grabar_archivo_asm()
      
     fclose(pf_asm2);
 }
+int getCodigo(t_terceto operador){
 
+	if(strcmp(operador.operacion,':=')){
+		
+		
+		return 1;
+	/*
+	} else if (operador[0] == '/'){
+		return 2;
+	} else if(operador[0] == '+'){
+		return 3;
+	} else if(operador[0] == '-'){
+		return 4;
+	} else if (strcmp(operador,"in") == 0) {
+		return 5;
+	} else if (strcmp(operador,"==") == 0) {
+		return 6;
+	} else if (strcmp(operador,"<>") == 0) {
+		return 7;
+	} else if (strcmp(operador,"<") == 0) {
+		return 8;
+	} else if (strcmp(operador,">") == 0) {
+		return 9;
+	} else if (strcmp(operador,">=") == 0) {
+		return 10;
+	} else if (strcmp(operador,"<=") == 0) {
+		return 11;
+	*/
+	} else {
+		return 0;
+	}
+}
 
 char* get_nombre_cte_string_asm(char* cte)
 {
@@ -516,4 +573,33 @@ char* get_nombre_cte_string_asm(char* cte)
   aux[i] = '\0';
   
   return cte;
+}
+
+int getCodigo(char* operador){
+
+	if(operador[0] == '*'){
+		return 1;
+	} else if (operador[0] == '/'){
+		return 2;
+	} else if(operador[0] == '+'){
+		return 3;
+	} else if(operador[0] == '-'){
+		return 4;
+	} else if (strcmp(operador,"in") == 0) {
+		return 5;
+	} else if (strcmp(operador,"==") == 0) {
+		return 6;
+	} else if (strcmp(operador,"<>") == 0) {
+		return 7;
+	} else if (strcmp(operador,"<") == 0) {
+		return 8;
+	} else if (strcmp(operador,">") == 0) {
+		return 9;
+	} else if (strcmp(operador,">=") == 0) {
+		return 10;
+	} else if (strcmp(operador,"<=") == 0) {
+		return 11;
+	} else {
+		return 0;
+	}
 }
