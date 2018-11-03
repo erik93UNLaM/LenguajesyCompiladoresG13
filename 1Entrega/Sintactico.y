@@ -435,25 +435,33 @@ void escribirTerceto(t_terceto t){
 
 int grabar_archivo_asm()
 {
+	printf("OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK");
      int i;
      char aux_cte[31];
-
+	/*
      char* Asm_file = "Final.txt";
      
-     if((pf_asm = fopen(Asm_file, "w")) == NULL)
+     if((pf_asm = fopen(Asm_file, "a+")) == NULL)
      {
                printf("Error al grabar el archivo de intermedio \n");
                exit(1);
      }
-     
-      fprintf(pf_asm, ".MODEL LARGE \n");
-    fprintf(pf_asm, ".386 \n");
-    fprintf(pf_asm, ".STACK 200h \n");
-    fprintf(pf_asm, ".DATA \n");
+	*/ 
+	
+	FILE* pf_asm2 = fopen("Final.txt", "w");
+    fprintf(pf_asm2, ".MODEL LARGE \n");
+    fprintf(pf_asm2, ".386 \n");
+    fprintf(pf_asm2, ".STACK 200h \n");
+    fprintf(pf_asm2, ".DATA \n");
 
-    for(i=0; i<cant_entradaSint; i++)
+	printf("SALIDA ASSEMBLER");
+	
+    
+	for(i=0; i<cant_entradaSint; i++)
     {
-      strcpy(aux_cte, get_nombre_cte_string_asm(tabla_simbSinta[i].nombre));
+	 printf("Aca hay conytenido: %s", tabla_simbSinta[i].nombre);
+      strcpy(aux_cte, tabla_simbSinta[i].nombre); // get_nombre_cte_string_asm(tabla_simbSinta[i].nombre)
+	  printf("----------------El contenido de la materia---- %s",aux_cte);
       //if(!strcmp(tabla_simb[i].tipo, "CONST_REAL"))
       //{
       //  fprintf(pf_asm, "\t_%s dd %s \n", aux_cte, tabla_simb[i].valor);
@@ -463,28 +471,28 @@ int grabar_archivo_asm()
       {
         //cad1 db ìprimer cadenaî,í$í, 37 dup (?)
         //_aux1 db MAXTEXTSIZE dup(?), ë$í 
-        fprintf(pf_asm, "\t_%s db  %d dup (?) '$'\n", aux_cte,30 );//30 - Tabla_simb[i].longitud);
+        fprintf(pf_asm2, "\t_%s db  %d dup (?) '$'\n", aux_cte,30 );//30 - Tabla_simb[i].longitud);
       }
       //Si descomentamos esto solo pone lo que sean variables
       else if(!strcmp(tabla_simbSinta[i].tipo, "REAL"))
       {
-        fprintf(pf_asm, "\t_%s dd ? \n", aux_cte);
+        fprintf(pf_asm2, "\t_%s dd ? \n", aux_cte);
       }
     }
-
-     fprintf(pf_asm, ".CODE \n");
-     fprintf(pf_asm, "\t mov AX,@DATA \n");
-     fprintf(pf_asm, "\t mov DS,AX \n");
-   /*
+	
+    fprintf(pf_asm2, ".CODE \n");
+    fprintf(pf_asm2, "\t mov AX,@DATA \n");
+    fprintf(pf_asm2, "\t mov DS,AX \n");
+    /*
      *
      *
      *
     */
-   fprintf(pf_asm, "\t mov ax, 4C00h \n");
-   fprintf(pf_asm, "\t int 21h \n");
-   fprintf(pf_asm, "\t END \n");
+	fprintf(pf_asm2, "\t mov ax, 4C00h \n");
+	fprintf(pf_asm2, "\t int 21h \n");
+	fprintf(pf_asm2, "\t END \n");
      
-     fclose(pf_asm);
+    fclose(pf_asm2);
 }
 
 
@@ -507,5 +515,5 @@ char* get_nombre_cte_string_asm(char* cte)
   }
   aux[i] = '\0';
   
-  return aux;
+  return cte;
 }

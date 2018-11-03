@@ -1,0 +1,38 @@
+.MODEL LARGE 
+.386 
+.STACK 200h 
+.DATA 
+	_ dd ? 
+	_ dd ? 
+	_ dd ? 
+	_ dd ? 
+	_ dd ? 
+	_ dd ? 
+	_ db  30 dup (?) '$'
+	_ db  30 dup (?) '$'
+	_ db  30 dup (?) '$'
+.CODE 
+	 mov AX,@DATA 
+	 mov DS,AX 
+	 mov ax, 4C00h 
+	 int 21h 
+	 END 
+.MODEL LARGE 
+.386 
+.STACK 200h 
+.DATA 
+	_ls dd ? 
+	_n dd ? 
+	_li dd ? 
+	_a dd ? 
+	_b dd ? 
+	_i dd ? 
+	_cadena db  30 dup (?) '$'
+	_s db  30 dup (?) '$'
+	_peso db  30 dup (?) '$'
+.CODE 
+	 mov AX,@DATA 
+	 mov DS,AX 
+	 mov ax, 4C00h 
+	 int 21h 
+	 END 
