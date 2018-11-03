@@ -139,7 +139,7 @@ sentencia:      ciclow| seleccion | asignacion | teclado | reglaaverage
 
 teclado:        READ ID | WRITE CONST_STR | WRITE ID ;
 
-reglabetween:   BETWEEN{} P_A 
+reglabetween:   BETWEEN{printf(" Regla BETWEEN\n");} P_A 
                 expresion{expresion_terceto_aux = expresion_terceto;} COMA C_A 
                 expresion{expresion_between_aux = crearTerceto(">=", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);} PCOMA 
                 expresion{crearTerceto("==",expresion_between_aux.numeroTerceto,crearTerceto("<=", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto).numeroTerceto);
@@ -147,7 +147,7 @@ reglabetween:   BETWEEN{} P_A
 
 
 
-reglaaverage:   AVERAGE P_A C_A listaexpresiones C_C P_C { 
+reglaaverage:   AVERAGE{printf(" Regla AVERAGE\n");} P_A C_A listaexpresiones C_C P_C { 
                
                 t_terceto t_div = crearTerceto("/", expresion_sum_terceto.numeroTerceto, expresion_cont_terceto.numeroTerceto);
                 t_terceto t_avg = crearTerceto("avg", -1, -1);
