@@ -10,6 +10,7 @@
 int yystopparser=0;
 FILE  *yyin;
 FILE* pf_TS;
+FILE* pf_asm;
  typedef struct{
         int posicion;
         char nombre[30];
@@ -31,12 +32,14 @@ char stringVarAux[5];
 
 void agregarTipo(char * );
 void agregarIDs(char * );
-
+char* get_nombre_cte_string_asm(char* cte);
 
 int busca_en_TSinta(char*);
 void busca_Var_Existe(char*);
 int graba_TSinta();
 int inserta_TSinta(char*,char*);
+//grabar archivo assembler
+int grabar_archivo_asm();
 
 // TERCETO DECLARACIONES
 typedef struct terceto{
@@ -105,7 +108,7 @@ void escribirTerceto(t_terceto t1);
 
 %%
 programa: PROGRAM {printf(" Inicia COMPILADOR\n");} est_declaracion bloque ENDP   
-	{printf(" Fin COMPILADOR ok\n"); graba_TSinta(); escribirArchivoTercetos(); };
+	{printf(" Fin COMPILADOR ok\n"); graba_TSinta(); escribirArchivoTercetos(); grabar_archivo_asm(); };
 
 est_declaracion:
 	DECVAR {printf("     DECLARACIONES\n");} declaraciones ENDDEC {printf(" Fin de las Declaraciones\n"); 
@@ -426,4 +429,83 @@ void escribirTerceto(t_terceto t){
     fprintf(arch, "[%d] (%s, [%d], [%d])\n", t.numeroTerceto, t.operacion, t.t1, t.t2);
   //printf("[%d] (%s, [%d])", t.numeroTerceto, t.operacion, t.(*t1).numeroTerceto); 
   fclose(arch);
+}
+
+
+
+int grabar_archivo_asm()
+{
+     int i;
+     char aux_cte[31];
+
+     char* Asm_file = "Final.txt";
+     
+     if((pf_asm = fopen(Asm_file, "w")) == NULL)
+     {
+               printf("Error al grabar el archivo de intermedio \n");
+               exit(1);
+     }
+     
+      fprintf(pf_asm, ".MODEL LARGE \n");
+    fprintf(pf_asm, ".386 \n");
+    fprintf(pf_asm, ".STACK 200h \n");
+    fprintf(pf_asm, ".DATA \n");
+
+    for(i=0; i<cant_entradaSint; i++)
+    {
+      strcpy(aux_cte, get_nombre_cte_string_asm(tabla_simbSinta[i].nombre));
+      //if(!strcmp(tabla_simb[i].tipo, "CONST_REAL"))
+      //{
+      //  fprintf(pf_asm, "\t_%s dd %s \n", aux_cte, tabla_simb[i].valor);
+      //}
+      //else 
+        if(!strcmp(tabla_simbSinta[i].tipo, "STRING"))
+      {
+        //cad1 db ìprimer cadenaî,í$í, 37 dup (?)
+        //_aux1 db MAXTEXTSIZE dup(?), ë$í 
+        fprintf(pf_asm, "\t_%s db  %d dup (?) '$'\n", aux_cte,30 );//30 - Tabla_simb[i].longitud);
+      }
+      //Si descomentamos esto solo pone lo que sean variables
+      else if(!strcmp(tabla_simbSinta[i].tipo, "REAL"))
+      {
+        fprintf(pf_asm, "\t_%s dd ? \n", aux_cte);
+      }
+    }
+
+     fprintf(pf_asm, ".CODE \n");
+     fprintf(pf_asm, "\t mov AX,@DATA \n");
+     fprintf(pf_asm, "\t mov DS,AX \n");
+   /*
+     *
+     *
+     *
+    */
+   fprintf(pf_asm, "\t mov ax, 4C00h \n");
+   fprintf(pf_asm, "\t int 21h \n");
+   fprintf(pf_asm, "\t END \n");
+     
+     fclose(pf_asm);
+}
+
+
+char* get_nombre_cte_string_asm(char* cte)
+{
+  /*Para quitar caracteres raros para asm*/
+  char aux[31];
+  int  i=0;
+  
+  while(*cte != '\0')
+  {
+    if(*cte != ' ' && *cte != '\"' && *cte != '.' && *cte != '+' && *cte != '-' && *cte != '*' && *cte != '/' && *cte != ','
+      && *cte != '&' && *cte != '|' && *cte != '!' && *cte != '(' && *cte != ')' && *cte != '[' && *cte != ']'
+      && *cte != ':' && *cte != '=' && *cte != '<' && *cte != '>' && *cte != '@' && *cte != '%' && *cte != '$')
+    {
+      aux[i] = *cte;
+      i++;
+    }
+    cte++;
+  }
+  aux[i] = '\0';
+  
+  return aux;
 }
