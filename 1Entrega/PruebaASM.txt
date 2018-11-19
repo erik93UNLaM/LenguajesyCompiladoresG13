@@ -1,0 +1,14 @@
+PROGRAM  
+DECVAR
+ ls, n, li, a, b, i : REAL
+ cadena, s, peso : STRING
+ENDDEC
+
+n:=i
+
+li := a + b 
+
+ls:=6*n
+
+
+ENDP

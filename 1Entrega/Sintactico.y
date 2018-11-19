@@ -223,12 +223,8 @@ asignacion: ID OP_AS expresion {
 
 
 seleccion: 
-    	  IF  condicion {crearTerceto(op_comparacion,-1,-1);
-		                 //insertar_pila(comparacion,indiceTerceto);
-						 }THEN bloque ENDIF{printf("     IF\n");} 
-	| IF  condicion {crearTerceto(op_comparacion,-1,-1);
-	                 //insertar_pila(comparacion,indiceTerceto);
-					 }THEN bloque ELSE bloque ENDIF {printf("     IF con ELSE\n");};
+    	  IF  condicion THEN bloque ENDIF{printf("     IF\n");} 
+	| IF  condicion THEN bloque ELSE bloque ENDIF {printf("     IF con ELSE\n");};
 
 condicion: 
          comparacion 
@@ -237,8 +233,8 @@ condicion:
 	 ;
 
 comparacion:  expresion{expresion_terceto_aux = expresion_terceto;}
-         OP_COMPARACION{getCodigo(yytext);}  expresion 
-         {crearTerceto("CMP", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);}
+         OP_COMPARACION{strcpy(stringVarAux,yytext);}  expresion 
+         {crearTerceto(stringVarAux, expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);}
         | reglabetween  ;
 
 expresion:
@@ -257,7 +253,7 @@ factor:
       ID {
           busca_Var_Existe(yytext);
           printf("LLEGO EL LEXEMA DEL ID  : %s\n",yytext);
-          factor_terceto = crearTerceto($<str_val>1,-1,-1);;
+          factor_terceto = crearTerceto($<str_val>1,-1,-1);
           }
       | CONST_REAL {
           
