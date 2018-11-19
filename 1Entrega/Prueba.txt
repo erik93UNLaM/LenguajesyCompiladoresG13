@@ -4,12 +4,11 @@ DECVAR
  cadena, s, peso : STRING
 ENDDEC
 
-ls:=6
-	
-if a<7 then
+n:=i
 
-	b:=5
+li := a + b 
 
-endif
+ls:=6*n
+
 
 ENDP

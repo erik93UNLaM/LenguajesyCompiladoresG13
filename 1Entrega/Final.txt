@@ -1,7 +1,10 @@
+include macros2.asm
+include number.asm
 .MODEL LARGE 
 .386 
 .STACK 200h 
 .DATA 
+	_6 dd 6 
 	_ls dd ? 
 	_n dd ? 
 	_li dd ? 
@@ -11,13 +14,24 @@
 	_cadena db  30 dup (?) '$'
 	_s db  30 dup (?) '$'
 	_peso db  30 dup (?) '$'
+	_aux dd ? 
 .CODE 
 	 mov AX,@DATA 
 	 mov DS,AX 
-	 FLD ls 
-	 FSTP 6 
-	 FLD b 
-	 FSTP 5 
-	 mov ax, 4C00h 
-	 int 21h 
-	 END 
+	 FLD _n 
+	 FSTP _i  ; Asignacion 
+	 FLD _a 
+	 FLD _b 
+	 FADD 
+	 FSTP _aux 
+	 FLD _li 
+	 FSTP _aux  ; Asignacion 
+	 FLD _6 
+	 FLD _n 
+	 FMUL 
+	 FSTP _aux 
+	 FLD _ls 
+	 FSTP _aux  ; Asignacion 
+mov ax, 4C00h 
+int 21h 
+END 
