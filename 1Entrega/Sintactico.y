@@ -236,7 +236,6 @@ condicion:
 comparacion:  expresion{expresion_terceto_aux = expresion_terceto;}
          OP_COMPARACION{strcpy(stringVarAux,yytext);}  expresion 
          {crearTerceto(stringVarAux, expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);
-          printf("VAR terceto: %s \n",stringVarAux);
            crearTercetoSalto(stringVarAux);
          };
         | reglabetween  ;
@@ -411,12 +410,7 @@ t_terceto crearTerceto(char* operacion,int t1,int t2){
   t_terceto result;
   strcpy(result.operacion, operacion);
   result.t1 = t1;
-  result.t2 = t2;
-  //t_terceto *aux = buscarTerceto(result);
-  //if(indiceTerceto > 0 && aux != NULL){
-   // result = *aux;
-  //}
-  //else{   
+  result.t2 = t2; 
    result.numeroTerceto = indiceTerceto++;
     vectorTercetos = (t_terceto*) realloc(vectorTercetos, sizeof(t_terceto) * indiceTerceto);
     vectorTercetos[indiceTerceto-1] = result;
@@ -427,17 +421,17 @@ t_terceto crearTerceto(char* operacion,int t1,int t2){
 
 void crearTercetoSalto(char* operador){
   if (strcmp(operador,"==") == 0) {
-    crearTerceto("BNE",-1,-1);
+    crearTerceto("JNE",-1,-1);
   } else if (strcmp(operador,"><") == 0) {
-    crearTerceto("BEQ",-1,-1);
+    crearTerceto("JE",-1,-1);
   } else if (strcmp(operador,"<") == 0) {
-    crearTerceto("BGE",-1,-1);
+    crearTerceto("JGE",-1,-1);
   } else if (strcmp(operador,">") == 0) {
-    crearTerceto("BLE",-1,-1);
+    crearTerceto("JLE",-1,-1);
   } else if (strcmp(operador,">=") == 0) {
-    crearTerceto("BLT",-1,-1);
+    crearTerceto("JLT",-1,-1);
   } else if (strcmp(operador,"<=") == 0) {
-    crearTerceto("BGT",-1,-1);
+    crearTerceto("JGT",-1,-1);
   } else {
     return 0;
   }
@@ -470,9 +464,7 @@ void escribirArchivoTercetos(){
 
 //Escribe un terceto en el archivo
 void escribirTerceto(t_terceto t,FILE* arch){
-  //printf("terceto a escribir en archivo:");
   mostrarTerceto(t);
-  //FILE* arch = fopen(TERCETOS, "a+");
   if(strcmp(t.operacion, "BI")==0)
     fprintf(arch, "[%d] (%s,[%d],-)\n", t.numeroTerceto, t.operacion, t.t2);
   else if(t.t1 == -1 && t.t2 == -1)
@@ -481,7 +473,6 @@ void escribirTerceto(t_terceto t,FILE* arch){
     fprintf(arch, "[%d] (%s,[%d],_)\n", t.numeroTerceto, t.operacion, t.t1);
   else
     fprintf(arch, "[%d] (%s,[%d],[%d])\n", t.numeroTerceto, t.operacion, t.t1, t.t2);
-  //printf("[%d] (%s, [%d])", t.numeroTerceto, t.operacion, t.(*t1).numeroTerceto); 
   
 }
 
@@ -564,7 +555,7 @@ int grabar_archivo_asm()
 		if (esOperacion(vectorTercetos[i].operacion) == 0)
 		{
 			getCodigo(vectorTercetos[i].operacion);
-			printf("es operacion.terceto %d\n",i);
+			//printf("es operacion.terceto %d\n",i);
 			//Obtengo operadores
 			fprintf(pf_asm, "\t FLD _%s \n", operandoresASM[vectorTercetos[i].t1]);
 			fprintf(pf_asm, "\t FLD _%s \n", operandoresASM[vectorTercetos[i].t2]);
@@ -586,7 +577,7 @@ int grabar_archivo_asm()
 
 void getCodigo(char* operador){
 	
-	printf("operador: %s\n",operador);
+	//printf("operador: %s\n",operador);
 	if (strcmp(operador,"==") == 0) {
 		strcpy(op_comparacion,"BNE");
 	} else if (strcmp(operador,"><") == 0) {
