@@ -539,8 +539,8 @@ int grabar_archivo_asm()
 		//ASIGNACION
 		if (strcmp(vectorTercetos[i].operacion, ":=" ) == 0)
 		{
-			fprintf(pf_asm, "\t FLD _%s \n", operandoresASM[vectorTercetos[i].t1]);
-			fprintf(pf_asm, "\t FSTP _%s  ; Asignacion \n", operandoresASM[vectorTercetos[i].t2]);	
+			fprintf(pf_asm, "\t FLD _%s \n", operandoresASM[vectorTercetos[i].t2]);
+			fprintf(pf_asm, "\t FSTP _%s  ; Asignacion \n", operandoresASM[vectorTercetos[i].t1]);	
 		}
 		//OPERACIONES
 		if (esOperacion(vectorTercetos[i].operacion) == 0)
