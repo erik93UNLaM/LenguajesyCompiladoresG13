@@ -2,6 +2,9 @@
 .386 
 .STACK 200h 
 .DATA 
+	_6 dd 6 
+	_7 dd 7 
+	_5 dd 5 
 	_ls dd ? 
 	_n dd ? 
 	_li dd ? 
@@ -14,6 +17,10 @@
 .CODE 
 	 mov AX,@DATA 
 	 mov DS,AX 
-	 mov ax, 4C00h 
-	 int 21h 
-	 END 
+	 FLD ls 
+	 FSTP 6 
+	 FLD b 
+	 FSTP 5 
+mov ax, 4C00h 
+int 21h 
+END 

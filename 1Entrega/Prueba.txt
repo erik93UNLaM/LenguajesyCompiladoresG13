@@ -3,5 +3,13 @@ DECVAR
  ls, n, li, a, b, i : REAL
  cadena, s, peso : STRING
 ENDDEC
-ls:=34.5
+
+ls:=6
+	
+if a<7 then
+
+	b:=5
+
+endif
+
 ENDP

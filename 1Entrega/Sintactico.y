@@ -20,11 +20,14 @@ FILE* pf_asm;
         } TS_reg;
     
  TS_reg tabla_simbSinta[100];
+ TS_reg ts_asm[100];
+
 
 char listaDeTipos[][100]={"."};
 int listaDeIDs[100];
 
 int cant_entradaSint = 0;
+int totalVariables = 0;
 int cantidadTipos=0;              
 int cantidadIDs=0;     
 char* yytext;
@@ -38,9 +41,6 @@ int busca_en_TSinta(char*);
 void busca_Var_Existe(char*);
 int graba_TSinta();
 int inserta_TSinta(char*,char*);
-//grabar archivo assembler
-int grabar_archivo_asm();
-int getCodigo(char* operador);
 
 // TERCETO DECLARACIONES
 typedef struct terceto{
@@ -63,15 +63,38 @@ t_terceto  asignacion_terceto,
       expresion_cont_terceto_uno,
       condicion_terceto;
 t_terceto *vectorTercetos;
-char *vectorVariablesAssembler;
+//char *vectorVariablesAssembler;
 int indiceTerceto = 0;
+char op_comparacion[5];
 
 
 t_terceto crearTerceto(char*,int,int);
 t_terceto* buscarTerceto(t_terceto t);
 void mostrarTerceto(t_terceto terceto);
 void escribirArchivoTercetos();
-void escribirTerceto(t_terceto t1);
+void escribirTerceto(t_terceto t1,FILE* arch);
+
+//PILA
+typedef struct s_nodo {
+    int valor;
+    struct s_nodo *sig;
+} t_nodo;
+typedef t_nodo* t_pila;
+
+t_pila pila;
+t_pila comparacion; //Indica que operador de comparacion se uso
+t_pila pila_condicion; //Apila los tipos de condicion (and, or, not) cuando hay anidamiento
+
+void insertar_pila (t_pila*, int);
+int sacar_pila(t_pila*);
+void crear_pila(t_pila*);
+void destruir_pila(t_pila*);
+
+//ASSEMBLER
+int grabar_archivo_asm();
+int obtenerTablaSimbolosCompleta();
+char* buscaTipoEnTS(char* nombre);
+void getCodigo(char* operador);
 
 %}
 
@@ -199,8 +222,12 @@ asignacion: ID OP_AS expresion {
 
 
 seleccion: 
-    	  IF  condicion THEN bloque ENDIF{printf("     IF\n");} 
-	| IF  condicion THEN bloque ELSE bloque ENDIF {printf("     IF con ELSE\n");};
+    	  IF  condicion {crearTerceto(op_comparacion,-1,-1);
+		                 //insertar_pila(comparacion,indiceTerceto);
+						 }THEN bloque ENDIF{printf("     IF\n");} 
+	| IF  condicion {crearTerceto(op_comparacion,-1,-1);
+	                 //insertar_pila(comparacion,indiceTerceto);
+					 }THEN bloque ELSE bloque ENDIF {printf("     IF con ELSE\n");};
 
 condicion: 
          comparacion 
@@ -209,8 +236,8 @@ condicion:
 	 ;
 
 comparacion:  expresion{expresion_terceto_aux = expresion_terceto;}
-         OP_COMPARACION{strcpy(stringVarAux,yytext);}  expresion 
-         {crearTerceto(stringVarAux, expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);}
+         OP_COMPARACION{getCodigo(yytext);}  expresion 
+         {crearTerceto("CMP", expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);}
         | reglabetween  ;
 
 expresion:
@@ -229,7 +256,7 @@ factor:
       ID {
           busca_Var_Existe(yytext);
           printf("LLEGO EL LEXEMA DEL ID  : %s\n",yytext);
-          factor_terceto = crearTerceto($<str_val>1,-1,-1,"_",$<str_val>1);
+          factor_terceto = crearTerceto($<str_val>1,-1,-1);;
           }
       | CONST_REAL {
           
@@ -257,6 +284,8 @@ int main(int argc,char *argv[])
   {
   //TERCETO
   //openFile(TERCETOS, &intermedia);
+   crear_pila(&comparacion);
+   printf("cree la pila\n");
 	yyparse();
   }
   fclose(yyin);
@@ -355,21 +384,21 @@ int graba_TSinta()
                exit(1);
      }
      
-     fprintf(pf_TS, "POSICION \t\t\t NOMBRE \t\t TIPO \t\t VALOR \t\t LONGITUD \n");
+     //fprintf(pf_TS, "POSICION \t\t\t NOMBRE \t\t TIPO \t\t VALOR \t\t LONGITUD \n");
      
       for(i = 0; i < cant_entradaSint; i++)
       {
-           fprintf(pf_TS,"%d \t\t\t\t %s \t\t\t", tabla_simbSinta[i].posicion, tabla_simbSinta[i].nombre);
+           fprintf(pf_TS,"%d\t\t\t\t%s\t\t\t", tabla_simbSinta[i].posicion, tabla_simbSinta[i].nombre);
            
           
             if(tabla_simbSinta[i].tipo != NULL)
-               fprintf(pf_TS,"%s \t\t\t", tabla_simbSinta[i].tipo);
+               fprintf(pf_TS,"%s\t\t\t", tabla_simbSinta[i].tipo);
            
           
             if(tabla_simbSinta[i].valor != NULL)
-               fprintf(pf_TS,"%s \t\t\t", tabla_simbSinta[i].valor);
+               fprintf(pf_TS,"%s\t\t\t", tabla_simbSinta[i].valor);
            
-            fprintf(pf_TS,"%d \n", tabla_simbSinta[i].longitud);
+            fprintf(pf_TS,"%d\n", tabla_simbSinta[i].longitud);
       }    
      fclose(pf_TS);
 }
@@ -377,27 +406,6 @@ int graba_TSinta()
 
 //TERCETOS
 //Crea el terceto con los indices de los tercetos. Si no existen tiene -1
-t_terceto crearTerceto(char* operacion,int t1,int t2, char* valor){
-  t_terceto result;
-  strcpy(result.operacion, operacion);
-  result.t1 = t1;
-  result.t2 = t2;
-  //t_terceto *aux = buscarTerceto(result);
-  //if(indiceTerceto > 0 && aux != NULL){
-   // result = *aux;
-  //}
-  //else{   
-    result.numeroTerceto = indiceTerceto++;
-    vectorTercetos = (t_terceto*) realloc(vectorTercetos, sizeof(t_terceto) * indiceTerceto);
-    vectorTercetos[indiceTerceto-1] = result;
-	
-	vectorVariablesAssembler = (char*) realloc(vectorVariablesAssembler, sizeof(char) * indiceTerceto);
-    vectorVariablesAssembler[indiceTerceto-1] = valor
-	
-  //}
-  return result;
-}
-
 t_terceto crearTerceto(char* operacion,int t1,int t2){
   t_terceto result;
   strcpy(result.operacion, operacion);
@@ -408,7 +416,7 @@ t_terceto crearTerceto(char* operacion,int t1,int t2){
    // result = *aux;
   //}
   //else{   
-    result.numeroTerceto = indiceTerceto++;
+   result.numeroTerceto = indiceTerceto++;
     vectorTercetos = (t_terceto*) realloc(vectorTercetos, sizeof(t_terceto) * indiceTerceto);
     vectorTercetos[indiceTerceto-1] = result;
 	
@@ -435,15 +443,17 @@ t_terceto* buscarTerceto(t_terceto t){
 //Escribe todos los Tercetos
 void escribirArchivoTercetos(){
   int i;
+  FILE* tercetos = fopen(TERCETOS, "w");
   for(i = 0; i < indiceTerceto; i++)
-    escribirTerceto(vectorTercetos[i]);
+    escribirTerceto(vectorTercetos[i],tercetos);
+  fclose(tercetos);
 }
 
 //Escribe un terceto en el archivo
-void escribirTerceto(t_terceto t){
+void escribirTerceto(t_terceto t,FILE* arch){
   //printf("terceto a escribir en archivo:");
   mostrarTerceto(t);
-  FILE* arch = fopen(TERCETOS, "a+");
+  //FILE* arch = fopen(TERCETOS, "a+");
   if(strcmp(t.operacion, "BI")==0)
     fprintf(arch, "[%d] (%s,[%d],-)\n", t.numeroTerceto, t.operacion, t.t2);
   else if(t.t1 == -1 && t.t2 == -1)
@@ -453,104 +463,89 @@ void escribirTerceto(t_terceto t){
   else
     fprintf(arch, "[%d] (%s,[%d],[%d])\n", t.numeroTerceto, t.operacion, t.t1, t.t2);
   //printf("[%d] (%s, [%d])", t.numeroTerceto, t.operacion, t.(*t1).numeroTerceto); 
-  fclose(arch);
+  
 }
 
 
 
 int grabar_archivo_asm()
 {
-	printf("OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK");
-     int i;
-     char aux_cte[31];
-	/*
-     char* Asm_file = "Final.txt";
-     
-     if((pf_asm = fopen(Asm_file, "a+")) == NULL)
-     {
-               printf("Error al grabar el archivo de intermedio \n");
-               exit(1);
-     }
-	*/ 
+	printf("Generando ASSEMBLER\n");
+    int i;
+    char aux_cte[31];
+	FILE* pf_asm;
+	char* tipo;
+	char operandoresASM[100][100];
 	
-	FILE* pf_asm2 = fopen("Final.txt", "w");
-    fprintf(pf_asm2, ".MODEL LARGE \n");
-    fprintf(pf_asm2, ".386 \n");
-    fprintf(pf_asm2, ".STACK 200h \n");
-    fprintf(pf_asm2, ".DATA \n");
-
-	printf("SALIDA ASSEMBLER");
+	//Leo el archivo de la tabla de simbolos para poder tener las constantes
+	if(obtenerTablaSimbolosCompleta()==1)
+	{
+		printf("No se pudo obtener las variables de la tabla de simbolos.\n");
+		exit(1);
+	}
 	
-    
-	for(i=0; i<cant_entradaSint; i++)
+	if((pf_asm = fopen("Final.txt", "w")) == NULL ){
+		printf("\nE \nE \nE \nE \nE \nE \nE \nE Error al generar ASSEMBLER \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE ");
+		exit(1);
+	}
+	
+	/* Cabecera del código ASSEMBLER */
+    fprintf(pf_asm, ".MODEL LARGE \n");
+    fprintf(pf_asm, ".386 \n");
+    fprintf(pf_asm, ".STACK 200h \n");
+    fprintf(pf_asm, ".DATA \n");
+	
+    printf("Generando Cabecera\n");
+	for(i=0; i<totalVariables; i++)
     {
-	  strcpy(aux_cte, tabla_simbSinta[i].nombre); // get_nombre_cte_string_asm(tabla_simbSinta[i].nombre)
-	  //if(!strcmp(tabla_simb[i].tipo, "CONST_REAL"))
-      //{
-      //  fprintf(pf_asm, "\t_%s dd %s \n", aux_cte, tabla_simb[i].valor);
-      //}
-      //else 
-        if(!strcmp(tabla_simbSinta[i].tipo, "STRING"))
+	  strcpy(aux_cte, ts_asm[i].nombre); 
+      if(!strcmp(ts_asm[i].tipo, "STRING"))
       {
-        //cad1 db ìprimer cadenaî,í$í, 37 dup (?)
-        //_aux1 db MAXTEXTSIZE dup(?), ë$í 
-        fprintf(pf_asm2, "\t_%s db  %d dup (?) '$'\n", aux_cte,30 );//30 - Tabla_simb[i].longitud);
+        fprintf(pf_asm, "\t_%s db  %d dup (?) '$'\n", aux_cte, 30 );//30 - Tabla_simb[i].longitud);
       }
-      //Si descomentamos esto solo pone lo que sean variables
-      else if(!strcmp(tabla_simbSinta[i].tipo, "REAL"))
+      else if(!strcmp(ts_asm[i].tipo, "REAL"))
       {
-        fprintf(pf_asm2, "\t_%s dd ? \n", aux_cte);
+        fprintf(pf_asm, "\t_%s dd ? \n", aux_cte);
+      }
+	  else if(!strcmp(ts_asm[i].tipo, "CONST_REAL"))
+      {
+        fprintf(pf_asm, "\t_%s dd %s \n", aux_cte, aux_cte);
+      }
+	  else if(!strcmp(ts_asm[i].tipo, "CONST_STRING"))
+      {
+        fprintf(pf_asm, "\t_%s db %s %d dup (?) '$'\n", aux_cte, aux_cte, 30 );//30 - Tabla_simb[i].longitud);
       }
     }
 	
-	for(i = 0; i < indiceTerceto; i++){
-			getCodigo(vectorTercetos[i]);
+	
+    fprintf(pf_asm, ".CODE \n");
+    fprintf(pf_asm, "\t mov AX,@DATA \n");
+    fprintf(pf_asm, "\t mov DS,AX \n");
+    
+	/* Código ASSEMBLER */
+	printf("Generando CODIGO\n");
+	for(i=0;i<indiceTerceto;i++)
+	{	
+		//printf("terceto de operacion: [%d] %s %d %d\n", vectorTercetos[i].numeroTerceto, vectorTercetos[i].operacion, vectorTercetos[i].t1, vectorTercetos[i].t2);
+		//Operadores:Constantes y IDs
+		if(vectorTercetos[i].t1 == -1 && vectorTercetos[i].t2 == -1)
+		{
+			strcpy(operandoresASM[i],vectorTercetos[i].operacion);
+		}
+		//ASIGNACION
+		if (strcmp(vectorTercetos[i].operacion, ":=" ) == 0)
+		{
+			fprintf(pf_asm, "\t FLD %s \n", operandoresASM[vectorTercetos[i].t1]);
+			fprintf(pf_asm, "\t FSTP %s \n", operandoresASM[vectorTercetos[i].t2]);	
+		}
 	}
-    fprintf(pf_asm2, ".CODE \n");
-    fprintf(pf_asm2, "\t mov AX,@DATA \n");
-    fprintf(pf_asm2, "\t mov DS,AX \n");
-    /*
-     *
-     *
-     *
-    */
-	fprintf(pf_asm2, "\t mov ax, 4C00h \n");
-	fprintf(pf_asm2, "\t int 21h \n");
-	fprintf(pf_asm2, "\t END \n");
+	
      
-    fclose(pf_asm2);
-}
-int getCodigo(t_terceto operador){
-
-	if(strcmp(operador.operacion,':=')){
-		
-		
-		return 1;
-	/*
-	} else if (operador[0] == '/'){
-		return 2;
-	} else if(operador[0] == '+'){
-		return 3;
-	} else if(operador[0] == '-'){
-		return 4;
-	} else if (strcmp(operador,"in") == 0) {
-		return 5;
-	} else if (strcmp(operador,"==") == 0) {
-		return 6;
-	} else if (strcmp(operador,"<>") == 0) {
-		return 7;
-	} else if (strcmp(operador,"<") == 0) {
-		return 8;
-	} else if (strcmp(operador,">") == 0) {
-		return 9;
-	} else if (strcmp(operador,">=") == 0) {
-		return 10;
-	} else if (strcmp(operador,"<=") == 0) {
-		return 11;
-	*/
-	} else {
-		return 0;
-	}
+	fprintf(pf_asm, "mov ax, 4C00h \n");
+	fprintf(pf_asm, "int 21h \n");
+	fprintf(pf_asm, "END \n");
+     
+    fclose(pf_asm);
 }
 
 char* get_nombre_cte_string_asm(char* cte)
@@ -575,31 +570,135 @@ char* get_nombre_cte_string_asm(char* cte)
   return cte;
 }
 
-int getCodigo(char* operador){
-
-	if(operador[0] == '*'){
-		return 1;
-	} else if (operador[0] == '/'){
-		return 2;
-	} else if(operador[0] == '+'){
-		return 3;
-	} else if(operador[0] == '-'){
-		return 4;
-	} else if (strcmp(operador,"in") == 0) {
-		return 5;
-	} else if (strcmp(operador,"==") == 0) {
-		return 6;
-	} else if (strcmp(operador,"<>") == 0) {
-		return 7;
+void getCodigo(char* operador){
+	
+	printf("operador: %s\n",operador);
+	if (strcmp(operador,"=") == 0) {
+		strcpy(op_comparacion,"BNE");
+	} else if (strcmp(operador,"><") == 0) {
+		strcpy(op_comparacion,"BEQ");
 	} else if (strcmp(operador,"<") == 0) {
-		return 8;
+		strcpy(op_comparacion,"BGE");
 	} else if (strcmp(operador,">") == 0) {
-		return 9;
+		strcpy(op_comparacion,"BLE");
 	} else if (strcmp(operador,">=") == 0) {
-		return 10;
+		strcpy(op_comparacion,"BLT");
 	} else if (strcmp(operador,"<=") == 0) {
-		return 11;
+		strcpy(op_comparacion,"BGT");
 	} else {
-		return 0;
+		strcpy(op_comparacion,"NO");
 	}
+}
+
+
+int obtenerTablaSimbolosCompleta()
+{
+	FILE* pf_tabla_simb;
+	char linea[500];
+	char tab[2] = "\t";
+	char* campo;
+	char* cadena;
+	
+	TS_reg reg;
+	
+	if((pf_tabla_simb = fopen("ts.txt", "r")) == NULL ){
+		printf("No se pudo abrir archivo ts.txt");
+		return 1;
+	}
+	//La primer linea la salteo
+	fgets(linea,sizeof(linea),pf_tabla_simb);
+	
+	while(fgets(linea,sizeof(linea),pf_tabla_simb))
+	{
+		//printf ("linea: %s", linea);
+		campo = strtok(linea,tab);
+		if(!campo)
+			return 1;
+		sscanf(campo,"\t%d",&reg.posicion);
+		
+		campo = strtok(NULL,tab);
+		if(!campo)
+			return 1;
+		if(strlen(campo)>30)
+			campo[30]= '\0';
+		strcpy(reg.nombre,campo);
+		
+		campo = strtok(NULL,tab);
+		if(!campo)
+			return 1;
+		if(strlen(campo)>20)
+			campo[20]= '\0';
+		strcpy(reg.tipo,campo);
+				
+		campo = strtok(NULL,tab);
+		if(!campo)
+			return 1;
+		if(strlen(campo)>100)
+			campo[100]= '\0';
+		strcpy(reg.nombre,campo);
+			
+		campo = strtok(NULL,tab);
+		if(!campo)
+			return 1;
+		sscanf(campo,"\t%d",&reg.longitud);
+				
+		ts_asm[totalVariables++] = reg;
+		
+	}
+	return 0;
+}
+
+char* buscaTipoEnTS(char* nombre)
+{
+    int i;
+    for(i = 0; i<totalVariables; i++)
+    {
+          if(!strcmp(ts_asm[i].nombre, nombre))
+          {
+                 return ts_asm[i].tipo;
+          }
+    }
+    
+    return NULL;
+}
+
+//PRIMITIVAS PILA
+/** inserta un entero en la pila */
+void insertar_pila (t_pila *p, int valor) {
+	printf("inicio insertar pila\n");
+    // creo nodo
+    t_nodo *nodo = (t_nodo*) malloc (sizeof(t_nodo));
+	printf("1\n");
+    // asigno valor
+    nodo->valor = valor;
+	printf("2\n");
+    // apunto al elemento siguiente
+    nodo->sig = *p;
+	printf("3\n");
+    // apunto al tope de la pila
+    *p = nodo;
+	printf("fin insertar pila\n");
+}
+
+/** obtiene un entero de la pila */
+int sacar_pila(t_pila *p) {
+    int valor = -1;
+    t_nodo *aux;
+    if (*p != NULL) {
+       aux = *p;
+       valor = aux->valor;
+       *p = aux->sig;
+       free(aux);
+    }
+    return valor;
+}
+
+/** crea una estructura de pila */
+void crear_pila(t_pila *p) {
+    *p = NULL;
+}
+
+/** destruye pila */
+void destruir_pila(t_pila *p) {
+    while ( -1 != sacar_pila(p));
 }

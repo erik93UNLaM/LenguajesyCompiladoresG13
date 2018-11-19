@@ -193,17 +193,17 @@ int graba_TS()
       fprintf(pf_TS, "POSICION \t\t\t NOMBRE \t\t TIPO \t\t VALOR \t\t LONGITUD \n");
       for(i = 0; i < cant_entradas; i++)
       {
-           fprintf(pf_TS,"%d \t\t\t\t %s \t\t\t", tabla_simb[i].posicion, tabla_simb[i].nombre);
+           fprintf(pf_TS,"%d \t\t\t\t%s\t\t\t", tabla_simb[i].posicion, tabla_simb[i].nombre);
            
           
             if(tabla_simb[i].tipo != NULL)
-               fprintf(pf_TS,"%s \t\t\t", tabla_simb[i].tipo);
+               fprintf(pf_TS,"%s\t\t\t", tabla_simb[i].tipo);
            
           
             if(tabla_simb[i].valor != NULL)
-               fprintf(pf_TS,"%s \t\t\t", tabla_simb[i].valor);
+               fprintf(pf_TS,"%s\t\t\t", tabla_simb[i].valor);
            
-            fprintf(pf_TS,"%d \n", tabla_simb[i].longitud);
+            fprintf(pf_TS,"%d\n", tabla_simb[i].longitud);
       }    
      fclose(pf_TS);
 }
