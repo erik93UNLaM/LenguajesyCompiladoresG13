@@ -228,23 +228,23 @@ seleccion:
           bloque ENDIF
             {printf("     IF\t TERCETOS fin de parte TRUE %d \n", indiceTerceto);
             int numT = sacar_pila(&comparacion);
-            printf("\n\n\n TERCET correcto? %s\n\n\n", vectorTercetos[numT].operacion);
+           //printf("\n\n\n TERCET correcto? %s\n\n\n", vectorTercetos[numT].operacion);
             vectorTercetos[numT].t1 = indiceTerceto;
 
           } 
 	     | IF  condicion THEN bloque 
             {
               crearTerceto("JMP",-1,-1);
-              printf("     IF\t TERCETOS fin de parte TRUE %d \n", indiceTerceto);
+             // printf("     IF\t TERCETOS fin de parte TRUE %d \n", indiceTerceto);
             int numT = sacar_pila(&comparacion);
-            printf("\n\n\n TERCET correcto? %s\n\n\n", vectorTercetos[numT].operacion);
+            //printf("\n\n\n TERCET correcto? %s\n\n\n", vectorTercetos[numT].operacion);
             vectorTercetos[numT].t1 = indiceTerceto;
             insertar_pila(&comparacion, indiceTerceto-1);
           } 
         ELSE bloque ENDIF 
             {printf("     IF con ELSE fin de parte FALSE %d \n", indiceTerceto);
             int numT = sacar_pila(&comparacion);
-            printf("\n\n\n TERCET FALSE correcto? %s\n\n\n", vectorTercetos[numT].operacion);
+            //printf("\n\n\n TERCET FALSE correcto? %s\n\n\n", vectorTercetos[numT].operacion);
             vectorTercetos[numT].t1 = indiceTerceto;
           } 
 
@@ -257,7 +257,7 @@ condicion:
 comparacion:  expresion{expresion_terceto_aux = expresion_terceto;}
          OP_COMPARACION{strcpy(stringVarAux,yytext);}  expresion 
          {crearTerceto(stringVarAux, expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);
-           printf("IF\t TERCETOS fin de condicion %d \n", indiceTerceto);
+           //printf("IF\t TERCETOS fin de condicion %d \n", indiceTerceto);
            insertar_pila(&comparacion, indiceTerceto);
            crearTercetoSalto(stringVarAux);
 
@@ -716,16 +716,16 @@ char* buscaTipoEnTS(char* nombre)
 //PRIMITIVAS PILA
 /** inserta un entero en la pila */
 void insertar_pila (t_pila *p, int valor) {
-	printf("inicio insertar pila\n");
+	printf("inicio insertar pila\t");
     // creo nodo
     t_nodo *nodo = (t_nodo*) malloc (sizeof(t_nodo));
-	printf("1\n");
+	//printf("1\n");
     // asigno valor
     nodo->valor = valor;
-	printf("2\n");
+	//printf("2\n");
     // apunto al elemento siguiente
     nodo->sig = *p;
-	printf("3\n");
+	//printf("3\n");
     // apunto al tope de la pila
     *p = nodo;
 	printf("fin insertar pila\n");
