@@ -1,4 +1,3 @@
-
 PROGRAM  
 DECVAR
  ls, n, li, a, b, i : REAL
@@ -28,18 +27,18 @@ else
 
 endif
 
-if a>7 AND a<4 then
+if a<7 AND a<4 then
 
 	i:=1.6
 
 endif
-if a>7 OR a<4 then
+if a<7 OR a<4 then
 
 	i:=1.6
 
 endif
 
-if NOT a>7  then
+if NOT a<7  then
 
 	i:=1.6
 

@@ -518,7 +518,7 @@ int grabar_archivo_asm()
 		exit(1);
 	}
 	
-	if((pf_asm = fopen("Final.txt", "w")) == NULL ){
+	if((pf_asm = fopen("Final.asm", "w")) == NULL ){
 		printf("\nE \nE \nE \nE \nE \nE \nE \nE Error al generar ASSEMBLER \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE \nE ");
 		exit(1);
 	}

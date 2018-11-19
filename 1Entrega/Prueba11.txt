@@ -9,8 +9,6 @@ if a>7  then
 
 	i:=1.6
 
-else
-	i:=5 + b
 endif
 
 ENDP
