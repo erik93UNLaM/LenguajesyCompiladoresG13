@@ -73,6 +73,7 @@ t_terceto* buscarTerceto(t_terceto t);
 void mostrarTerceto(t_terceto terceto);
 void escribirArchivoTercetos();
 void escribirTerceto(t_terceto t1,FILE* arch);
+void crearTercetoSalto(char*);
 
 //PILA
 typedef struct s_nodo {
@@ -234,7 +235,10 @@ condicion:
 
 comparacion:  expresion{expresion_terceto_aux = expresion_terceto;}
          OP_COMPARACION{strcpy(stringVarAux,yytext);}  expresion 
-         {crearTerceto(stringVarAux, expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);}
+         {crearTerceto(stringVarAux, expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);
+          printf("VAR terceto: %s \n",stringVarAux);
+           crearTercetoSalto(stringVarAux);
+         };
         | reglabetween  ;
 
 expresion:
@@ -421,6 +425,24 @@ t_terceto crearTerceto(char* operacion,int t1,int t2){
   return result;
 }
 
+void crearTercetoSalto(char* operador){
+  if (strcmp(operador,"==") == 0) {
+    crearTerceto("BNE",-1,-1);
+  } else if (strcmp(operador,"><") == 0) {
+    crearTerceto("BEQ",-1,-1);
+  } else if (strcmp(operador,"<") == 0) {
+    crearTerceto("BGE",-1,-1);
+  } else if (strcmp(operador,">") == 0) {
+    crearTerceto("BLE",-1,-1);
+  } else if (strcmp(operador,">=") == 0) {
+    crearTerceto("BLT",-1,-1);
+  } else if (strcmp(operador,"<=") == 0) {
+    crearTerceto("BGT",-1,-1);
+  } else {
+    return 0;
+  }
+}
+
 
 //Muestra el Terceto
 void mostrarTerceto(t_terceto t){
@@ -565,7 +587,7 @@ int grabar_archivo_asm()
 void getCodigo(char* operador){
 	
 	printf("operador: %s\n",operador);
-	if (strcmp(operador,"=") == 0) {
+	if (strcmp(operador,"==") == 0) {
 		strcpy(op_comparacion,"BNE");
 	} else if (strcmp(operador,"><") == 0) {
 		strcpy(op_comparacion,"BEQ");
@@ -596,7 +618,7 @@ int esOperacion(char *operacion){
    ||(strcmp(operacion, "+") == 0) 
    ||(strcmp(operacion, "-") == 0) 
    ||(strcmp(operacion, "==") == 0) 
-   ||(strcmp(operacion, "<>") == 0) 
+   ||(strcmp(operacion, "><") == 0) 
    ||(strcmp(operacion, "<") == 0) 
    ||(strcmp(operacion, ">") == 0) 
    ||(strcmp(operacion, ">=") == 0) 

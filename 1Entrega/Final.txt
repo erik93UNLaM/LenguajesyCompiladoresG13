@@ -116,7 +116,7 @@ include number.asm
 	 FSTP _i  ; Asignacion 
 	 FLD _a 
 	 FLD _7 
-	 BGE 
+	 BLE 
 	 FSTP _aux 
 	 FLD _a 
 	 FLD _4 
@@ -126,7 +126,7 @@ include number.asm
 	 FSTP _i  ; Asignacion 
 	 FLD _a 
 	 FLD _7 
-	 BGE 
+	 BLE 
 	 FSTP _aux 
 	 FLD _1.6 
 	 FSTP _i  ; Asignacion 

@@ -30,7 +30,7 @@ CONST_STR           \"({LETRA}|{DIGITO}|.)+\"
 COMENTARIOS         \-\/({LETRA}|{DIGITO}|.)+\/\-
 CONST_REAL          {DIGITO}*"."{DIGITO}*|{DIGITO}*
 ID					{LETRA}({LETRA}|{DIGITO}|_)*
-OP_COMPARACION     	["<"|"="|">"|"<="|">="|"><"]
+OP_COMPARACION     	["<"|"=="|">"|"<="|">="|"><"]
 OP_SURES           	["+"|"-"]
 OP_MULTDIV        	["*"|"/"]
 OP_AS				[":="]
