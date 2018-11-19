@@ -224,11 +224,32 @@ asignacion: ID OP_AS expresion {
 
 
 seleccion: 
-    	  IF  condicion THEN bloque ENDIF{printf("     IF\n");} 
-	| IF  condicion THEN bloque ELSE bloque ENDIF {printf("     IF con ELSE\n");};
+    	  IF  condicion THEN 
+          bloque ENDIF
+            {printf("     IF\t TERCETOS fin de parte TRUE %d \n", indiceTerceto);
+            int numT = sacar_pila(&comparacion);
+            printf("\n\n\n TERCET correcto? %s\n\n\n", vectorTercetos[numT].operacion);
+            vectorTercetos[numT].t1 = indiceTerceto;
+
+          } 
+	     | IF  condicion THEN bloque 
+            {
+              crearTerceto("JMP",-1,-1);
+              printf("     IF\t TERCETOS fin de parte TRUE %d \n", indiceTerceto);
+            int numT = sacar_pila(&comparacion);
+            printf("\n\n\n TERCET correcto? %s\n\n\n", vectorTercetos[numT].operacion);
+            vectorTercetos[numT].t1 = indiceTerceto;
+            insertar_pila(&comparacion, indiceTerceto-1);
+          } 
+        ELSE bloque ENDIF 
+            {printf("     IF con ELSE fin de parte FALSE %d \n", indiceTerceto);
+            int numT = sacar_pila(&comparacion);
+            printf("\n\n\n TERCET FALSE correcto? %s\n\n\n", vectorTercetos[numT].operacion);
+            vectorTercetos[numT].t1 = indiceTerceto;
+          } 
 
 condicion: 
-         comparacion 
+         comparacion    
          |comparacion OP_LOG comparacion 
          | OP_NOT comparacion
 	 ;
@@ -236,7 +257,10 @@ condicion:
 comparacion:  expresion{expresion_terceto_aux = expresion_terceto;}
          OP_COMPARACION{strcpy(stringVarAux,yytext);}  expresion 
          {crearTerceto(stringVarAux, expresion_terceto_aux.numeroTerceto, expresion_terceto.numeroTerceto);
+           printf("IF\t TERCETOS fin de condicion %d \n", indiceTerceto);
+           insertar_pila(&comparacion, indiceTerceto);
            crearTercetoSalto(stringVarAux);
+
          };
         | reglabetween  ;
 

@@ -62,37 +62,40 @@ Gramática
    35 asignacion: ID OP_AS expresion
 
    36 seleccion: IF condicion THEN bloque ENDIF
-   37          | IF condicion THEN bloque ELSE bloque ENDIF
 
-   38 condicion: comparacion
-   39          | comparacion OP_LOG comparacion
-   40          | OP_NOT comparacion
+   37 $@11: /* vacío */
 
-   41 $@11: /* vacío */
+   38 seleccion: IF condicion THEN bloque $@11 ELSE bloque ENDIF
+
+   39 condicion: comparacion
+   40          | comparacion OP_LOG comparacion
+   41          | OP_NOT comparacion
 
    42 $@12: /* vacío */
 
-   43 comparacion: expresion $@11 OP_COMPARACION $@12 expresion
-   44            | reglabetween
+   43 $@13: /* vacío */
 
-   45 expresion: termino
+   44 comparacion: expresion $@12 OP_COMPARACION $@13 expresion
+   45            | reglabetween
 
-   46 $@13: /* vacío */
+   46 expresion: termino
 
    47 $@14: /* vacío */
 
-   48 expresion: expresion $@13 OP_SURES $@14 termino
+   48 $@15: /* vacío */
 
-   49 termino: factor
+   49 expresion: expresion $@14 OP_SURES $@15 termino
 
-   50 $@15: /* vacío */
+   50 termino: factor
 
-   51 termino: termino OP_MULTDIV $@15 factor
+   51 $@16: /* vacío */
 
-   52 factor: ID
-   53       | CONST_REAL
-   54       | CONST_STR
-   55       | reglaaverage
+   52 termino: termino OP_MULTDIV $@16 factor
+
+   53 factor: ID
+   54       | CONST_REAL
+   55       | CONST_STR
+   56       | reglaaverage
 
 
 Terminales con las reglas donde aparecen
@@ -103,23 +106,23 @@ PROGRAM (258) 2
 ENDP (259) 2
 DECVAR (260) 4
 ENDDEC (261) 4
-CONST_REAL (262) 53
-CONST_STR (263) 22 54
+CONST_REAL (262) 54
+CONST_STR (263) 22 55
 REAL (264) 9
 STRING (265) 10
-IF (266) 36 37
-THEN (267) 36 37
-ELSE (268) 37
-ENDIF (269) 36 37
+IF (266) 36 38
+THEN (267) 36 38
+ELSE (268) 38
+ENDIF (269) 36 38
 WHILE (270) 34
 ENDW (271) 34
-OP_LOG (272) 39
-OP_NOT (273) 40
-ID (274) 11 12 21 23 35 52
-OP_COMPARACION (275) 43
+OP_LOG (272) 40
+OP_NOT (273) 41
+ID (274) 11 12 21 23 35 53
+OP_COMPARACION (275) 44
 OP_AS (276) 35
-OP_SURES (277) 48
-OP_MULTDIV (278) 51
+OP_SURES (277) 49
+OP_MULTDIV (278) 52
 COMA (279) 12 28 31
 P_A (280) 28 30
 P_C (281) 28 30
@@ -155,7 +158,7 @@ type (42)
 lista_var (43)
     en la izquierda: 11 12, en la derecha: 8 12
 bloque (44)
-    en la izquierda: 14 15, en la derecha: 2 15 34 36 37
+    en la izquierda: 14 15, en la derecha: 2 15 34 36 38
 $@4 (45)
     en la izquierda: 13, en la derecha: 14
 sentencia (46)
@@ -163,7 +166,7 @@ sentencia (46)
 teclado (47)
     en la izquierda: 21 22 23, en la derecha: 19
 reglabetween (48)
-    en la izquierda: 28, en la derecha: 44
+    en la izquierda: 28, en la derecha: 45
 $@5 (49)
     en la izquierda: 24, en la derecha: 28
 $@6 (50)
@@ -173,7 +176,7 @@ $@7 (51)
 $@8 (52)
     en la izquierda: 27, en la derecha: 28
 reglaaverage (53)
-    en la izquierda: 30, en la derecha: 20 55
+    en la izquierda: 30, en la derecha: 20 56
 $@9 (54)
     en la izquierda: 29, en la derecha: 30
 listaexpresiones (55)
@@ -185,27 +188,29 @@ $@10 (57)
 asignacion (58)
     en la izquierda: 35, en la derecha: 18
 seleccion (59)
-    en la izquierda: 36 37, en la derecha: 17
-condicion (60)
-    en la izquierda: 38 39 40, en la derecha: 34 36 37
-comparacion (61)
-    en la izquierda: 43 44, en la derecha: 38 39 40
-$@11 (62)
-    en la izquierda: 41, en la derecha: 43
+    en la izquierda: 36 38, en la derecha: 17
+$@11 (60)
+    en la izquierda: 37, en la derecha: 38
+condicion (61)
+    en la izquierda: 39 40 41, en la derecha: 34 36 38
+comparacion (62)
+    en la izquierda: 44 45, en la derecha: 39 40 41
 $@12 (63)
-    en la izquierda: 42, en la derecha: 43
-expresion (64)
-    en la izquierda: 45 48, en la derecha: 28 31 32 35 43 48
-$@13 (65)
-    en la izquierda: 46, en la derecha: 48
+    en la izquierda: 42, en la derecha: 44
+$@13 (64)
+    en la izquierda: 43, en la derecha: 44
+expresion (65)
+    en la izquierda: 46 49, en la derecha: 28 31 32 35 44 49
 $@14 (66)
-    en la izquierda: 47, en la derecha: 48
-termino (67)
-    en la izquierda: 49 51, en la derecha: 45 48 51
-$@15 (68)
-    en la izquierda: 50, en la derecha: 51
-factor (69)
-    en la izquierda: 52 53 54 55, en la derecha: 49 51
+    en la izquierda: 47, en la derecha: 49
+$@15 (67)
+    en la izquierda: 48, en la derecha: 49
+termino (68)
+    en la izquierda: 50 52, en la derecha: 46 49 52
+$@16 (69)
+    en la izquierda: 51, en la derecha: 52
+factor (70)
+    en la izquierda: 53 54 55 56, en la derecha: 50 52
 
 
 estado 0
@@ -367,7 +372,7 @@ estado 14
 estado 15
 
    36 seleccion: IF . condicion THEN bloque ENDIF
-   37          | IF . condicion THEN bloque ELSE bloque ENDIF
+   38          | IF . condicion THEN bloque $@11 ELSE bloque ENDIF
 
     CONST_REAL  desplazar e ir al estado 32
     CONST_STR   desplazar e ir al estado 33
@@ -516,21 +521,21 @@ estado 31
 
 estado 32
 
-   53 factor: CONST_REAL .
-
-    $default  reduce usando la regla 53 (factor)
-
-
-estado 33
-
-   54 factor: CONST_STR .
+   54 factor: CONST_REAL .
 
     $default  reduce usando la regla 54 (factor)
 
 
+estado 33
+
+   55 factor: CONST_STR .
+
+    $default  reduce usando la regla 55 (factor)
+
+
 estado 34
 
-   40 condicion: OP_NOT . comparacion
+   41 condicion: OP_NOT . comparacion
 
     CONST_REAL  desplazar e ir al estado 32
     CONST_STR   desplazar e ir al estado 33
@@ -548,9 +553,9 @@ estado 34
 
 estado 35
 
-   52 factor: ID .
+   53 factor: ID .
 
-    $default  reduce usando la regla 52 (factor)
+    $default  reduce usando la regla 53 (factor)
 
 
 estado 36
@@ -564,63 +569,63 @@ estado 36
 
 estado 37
 
-   44 comparacion: reglabetween .
+   45 comparacion: reglabetween .
 
-    $default  reduce usando la regla 44 (comparacion)
+    $default  reduce usando la regla 45 (comparacion)
 
 
 estado 38
 
-   55 factor: reglaaverage .
+   56 factor: reglaaverage .
 
-    $default  reduce usando la regla 55 (factor)
+    $default  reduce usando la regla 56 (factor)
 
 
 estado 39
 
    36 seleccion: IF condicion . THEN bloque ENDIF
-   37          | IF condicion . THEN bloque ELSE bloque ENDIF
+   38          | IF condicion . THEN bloque $@11 ELSE bloque ENDIF
 
     THEN  desplazar e ir al estado 54
 
 
 estado 40
 
-   38 condicion: comparacion .
-   39          | comparacion . OP_LOG comparacion
+   39 condicion: comparacion .
+   40          | comparacion . OP_LOG comparacion
 
     OP_LOG  desplazar e ir al estado 55
 
-    $default  reduce usando la regla 38 (condicion)
+    $default  reduce usando la regla 39 (condicion)
 
 
 estado 41
 
-   43 comparacion: expresion . $@11 OP_COMPARACION $@12 expresion
-   48 expresion: expresion . $@13 OP_SURES $@14 termino
+   44 comparacion: expresion . $@12 OP_COMPARACION $@13 expresion
+   49 expresion: expresion . $@14 OP_SURES $@15 termino
 
-    OP_SURES  reduce usando la regla 46 ($@13)
-    $default  reduce usando la regla 41 ($@11)
+    OP_SURES  reduce usando la regla 47 ($@14)
+    $default  reduce usando la regla 42 ($@12)
 
-    $@11  ir al estado 56
-    $@13  ir al estado 57
+    $@12  ir al estado 56
+    $@14  ir al estado 57
 
 
 estado 42
 
-   45 expresion: termino .
-   51 termino: termino . OP_MULTDIV $@15 factor
+   46 expresion: termino .
+   52 termino: termino . OP_MULTDIV $@16 factor
 
     OP_MULTDIV  desplazar e ir al estado 58
 
-    $default  reduce usando la regla 45 (expresion)
+    $default  reduce usando la regla 46 (expresion)
 
 
 estado 43
 
-   49 termino: factor .
+   50 termino: factor .
 
-    $default  reduce usando la regla 49 (termino)
+    $default  reduce usando la regla 50 (termino)
 
 
 estado 44
@@ -694,9 +699,9 @@ estado 51
 
 estado 52
 
-   40 condicion: OP_NOT comparacion .
+   41 condicion: OP_NOT comparacion .
 
-    $default  reduce usando la regla 40 (condicion)
+    $default  reduce usando la regla 41 (condicion)
 
 
 estado 53
@@ -709,7 +714,7 @@ estado 53
 estado 54
 
    36 seleccion: IF condicion THEN . bloque ENDIF
-   37          | IF condicion THEN . bloque ELSE bloque ENDIF
+   38          | IF condicion THEN . bloque $@11 ELSE bloque ENDIF
 
     $default  reduce usando la regla 13 ($@4)
 
@@ -719,7 +724,7 @@ estado 54
 
 estado 55
 
-   39 condicion: comparacion OP_LOG . comparacion
+   40 condicion: comparacion OP_LOG . comparacion
 
     CONST_REAL  desplazar e ir al estado 32
     CONST_STR   desplazar e ir al estado 33
@@ -737,25 +742,25 @@ estado 55
 
 estado 56
 
-   43 comparacion: expresion $@11 . OP_COMPARACION $@12 expresion
+   44 comparacion: expresion $@12 . OP_COMPARACION $@13 expresion
 
     OP_COMPARACION  desplazar e ir al estado 68
 
 
 estado 57
 
-   48 expresion: expresion $@13 . OP_SURES $@14 termino
+   49 expresion: expresion $@14 . OP_SURES $@15 termino
 
     OP_SURES  desplazar e ir al estado 69
 
 
 estado 58
 
-   51 termino: termino OP_MULTDIV . $@15 factor
+   52 termino: termino OP_MULTDIV . $@16 factor
 
-    $default  reduce usando la regla 50 ($@15)
+    $default  reduce usando la regla 51 ($@16)
 
-    $@15  ir al estado 70
+    $@16  ir al estado 70
 
 
 estado 59
@@ -771,12 +776,12 @@ estado 59
 estado 60
 
    35 asignacion: ID OP_AS expresion .
-   48 expresion: expresion . $@13 OP_SURES $@14 termino
+   49 expresion: expresion . $@14 OP_SURES $@15 termino
 
-    OP_SURES  reduce usando la regla 46 ($@13)
+    OP_SURES  reduce usando la regla 47 ($@14)
     $default  reduce usando la regla 35 (asignacion)
 
-    $@13  ir al estado 57
+    $@14  ir al estado 57
 
 
 estado 61
@@ -826,16 +831,17 @@ estado 66
 
    15 bloque: bloque . sentencia
    36 seleccion: IF condicion THEN bloque . ENDIF
-   37          | IF condicion THEN bloque . ELSE bloque ENDIF
+   38          | IF condicion THEN bloque . $@11 ELSE bloque ENDIF
 
     IF       desplazar e ir al estado 15
-    ELSE     desplazar e ir al estado 74
-    ENDIF    desplazar e ir al estado 75
+    ENDIF    desplazar e ir al estado 74
     WHILE    desplazar e ir al estado 16
     ID       desplazar e ir al estado 17
     READ     desplazar e ir al estado 18
     WRITE    desplazar e ir al estado 19
     AVERAGE  desplazar e ir al estado 20
+
+    $default  reduce usando la regla 37 ($@11)
 
     sentencia     ir al estado 21
     teclado       ir al estado 22
@@ -843,36 +849,37 @@ estado 66
     ciclow        ir al estado 24
     asignacion    ir al estado 25
     seleccion     ir al estado 26
+    $@11          ir al estado 75
 
 
 estado 67
 
-   39 condicion: comparacion OP_LOG comparacion .
+   40 condicion: comparacion OP_LOG comparacion .
 
-    $default  reduce usando la regla 39 (condicion)
+    $default  reduce usando la regla 40 (condicion)
 
 
 estado 68
 
-   43 comparacion: expresion $@11 OP_COMPARACION . $@12 expresion
+   44 comparacion: expresion $@12 OP_COMPARACION . $@13 expresion
 
-    $default  reduce usando la regla 42 ($@12)
+    $default  reduce usando la regla 43 ($@13)
 
-    $@12  ir al estado 76
+    $@13  ir al estado 76
 
 
 estado 69
 
-   48 expresion: expresion $@13 OP_SURES . $@14 termino
+   49 expresion: expresion $@14 OP_SURES . $@15 termino
 
-    $default  reduce usando la regla 47 ($@14)
+    $default  reduce usando la regla 48 ($@15)
 
-    $@14  ir al estado 77
+    $@15  ir al estado 77
 
 
 estado 70
 
-   51 termino: termino OP_MULTDIV $@15 . factor
+   52 termino: termino OP_MULTDIV $@16 . factor
 
     CONST_REAL  desplazar e ir al estado 32
     CONST_STR   desplazar e ir al estado 33
@@ -923,35 +930,32 @@ estado 72
 estado 73
 
    28 reglabetween: BETWEEN $@5 P_A expresion . $@6 COMA C_A expresion $@7 PCOMA expresion $@8 C_C P_C
-   48 expresion: expresion . $@13 OP_SURES $@14 termino
+   49 expresion: expresion . $@14 OP_SURES $@15 termino
 
-    OP_SURES  reduce usando la regla 46 ($@13)
+    OP_SURES  reduce usando la regla 47 ($@14)
     $default  reduce usando la regla 25 ($@6)
 
     $@6   ir al estado 82
-    $@13  ir al estado 57
+    $@14  ir al estado 57
 
 
 estado 74
-
-   37 seleccion: IF condicion THEN bloque ELSE . bloque ENDIF
-
-    $default  reduce usando la regla 13 ($@4)
-
-    bloque  ir al estado 83
-    $@4     ir al estado 9
-
-
-estado 75
 
    36 seleccion: IF condicion THEN bloque ENDIF .
 
     $default  reduce usando la regla 36 (seleccion)
 
 
+estado 75
+
+   38 seleccion: IF condicion THEN bloque $@11 . ELSE bloque ENDIF
+
+    ELSE  desplazar e ir al estado 83
+
+
 estado 76
 
-   43 comparacion: expresion $@11 OP_COMPARACION $@12 . expresion
+   44 comparacion: expresion $@12 OP_COMPARACION $@13 . expresion
 
     CONST_REAL  desplazar e ir al estado 32
     CONST_STR   desplazar e ir al estado 33
@@ -966,7 +970,7 @@ estado 76
 
 estado 77
 
-   48 expresion: expresion $@13 OP_SURES $@14 . termino
+   49 expresion: expresion $@14 OP_SURES $@15 . termino
 
     CONST_REAL  desplazar e ir al estado 32
     CONST_STR   desplazar e ir al estado 33
@@ -980,9 +984,9 @@ estado 77
 
 estado 78
 
-   51 termino: termino OP_MULTDIV $@15 factor .
+   52 termino: termino OP_MULTDIV $@16 factor .
 
-    $default  reduce usando la regla 51 (termino)
+    $default  reduce usando la regla 52 (termino)
 
 
 estado 79
@@ -1004,12 +1008,12 @@ estado 80
 estado 81
 
    32 listaexpresiones: expresion .
-   48 expresion: expresion . $@13 OP_SURES $@14 termino
+   49 expresion: expresion . $@14 OP_SURES $@15 termino
 
-    OP_SURES  reduce usando la regla 46 ($@13)
+    OP_SURES  reduce usando la regla 47 ($@14)
     $default  reduce usando la regla 32 (listaexpresiones)
 
-    $@13  ir al estado 57
+    $@14  ir al estado 57
 
 
 estado 82
@@ -1021,44 +1025,33 @@ estado 82
 
 estado 83
 
-   15 bloque: bloque . sentencia
-   37 seleccion: IF condicion THEN bloque ELSE bloque . ENDIF
+   38 seleccion: IF condicion THEN bloque $@11 ELSE . bloque ENDIF
 
-    IF       desplazar e ir al estado 15
-    ENDIF    desplazar e ir al estado 89
-    WHILE    desplazar e ir al estado 16
-    ID       desplazar e ir al estado 17
-    READ     desplazar e ir al estado 18
-    WRITE    desplazar e ir al estado 19
-    AVERAGE  desplazar e ir al estado 20
+    $default  reduce usando la regla 13 ($@4)
 
-    sentencia     ir al estado 21
-    teclado       ir al estado 22
-    reglaaverage  ir al estado 23
-    ciclow        ir al estado 24
-    asignacion    ir al estado 25
-    seleccion     ir al estado 26
+    bloque  ir al estado 89
+    $@4     ir al estado 9
 
 
 estado 84
 
-   43 comparacion: expresion $@11 OP_COMPARACION $@12 expresion .
-   48 expresion: expresion . $@13 OP_SURES $@14 termino
+   44 comparacion: expresion $@12 OP_COMPARACION $@13 expresion .
+   49 expresion: expresion . $@14 OP_SURES $@15 termino
 
-    OP_SURES  reduce usando la regla 46 ($@13)
-    $default  reduce usando la regla 43 (comparacion)
+    OP_SURES  reduce usando la regla 47 ($@14)
+    $default  reduce usando la regla 44 (comparacion)
 
-    $@13  ir al estado 57
+    $@14  ir al estado 57
 
 
 estado 85
 
-   48 expresion: expresion $@13 OP_SURES $@14 termino .
-   51 termino: termino . OP_MULTDIV $@15 factor
+   49 expresion: expresion $@14 OP_SURES $@15 termino .
+   52 termino: termino . OP_MULTDIV $@16 factor
 
     OP_MULTDIV  desplazar e ir al estado 58
 
-    $default  reduce usando la regla 48 (expresion)
+    $default  reduce usando la regla 49 (expresion)
 
 
 estado 86
@@ -1092,20 +1085,34 @@ estado 88
 
 estado 89
 
-   37 seleccion: IF condicion THEN bloque ELSE bloque ENDIF .
+   15 bloque: bloque . sentencia
+   38 seleccion: IF condicion THEN bloque $@11 ELSE bloque . ENDIF
 
-    $default  reduce usando la regla 37 (seleccion)
+    IF       desplazar e ir al estado 15
+    ENDIF    desplazar e ir al estado 93
+    WHILE    desplazar e ir al estado 16
+    ID       desplazar e ir al estado 17
+    READ     desplazar e ir al estado 18
+    WRITE    desplazar e ir al estado 19
+    AVERAGE  desplazar e ir al estado 20
+
+    sentencia     ir al estado 21
+    teclado       ir al estado 22
+    reglaaverage  ir al estado 23
+    ciclow        ir al estado 24
+    asignacion    ir al estado 25
+    seleccion     ir al estado 26
 
 
 estado 90
 
    31 listaexpresiones: listaexpresiones COMA expresion .
-   48 expresion: expresion . $@13 OP_SURES $@14 termino
+   49 expresion: expresion . $@14 OP_SURES $@15 termino
 
-    OP_SURES  reduce usando la regla 46 ($@13)
+    OP_SURES  reduce usando la regla 47 ($@14)
     $default  reduce usando la regla 31 (listaexpresiones)
 
-    $@13  ir al estado 57
+    $@14  ir al estado 57
 
 
 estado 91
@@ -1125,31 +1132,38 @@ estado 92
     AVERAGE     desplazar e ir al estado 20
 
     reglaaverage  ir al estado 38
-    expresion     ir al estado 93
+    expresion     ir al estado 94
     termino       ir al estado 42
     factor        ir al estado 43
 
 
 estado 93
 
-   28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion . $@7 PCOMA expresion $@8 C_C P_C
-   48 expresion: expresion . $@13 OP_SURES $@14 termino
+   38 seleccion: IF condicion THEN bloque $@11 ELSE bloque ENDIF .
 
-    OP_SURES  reduce usando la regla 46 ($@13)
-    $default  reduce usando la regla 26 ($@7)
-
-    $@7   ir al estado 94
-    $@13  ir al estado 57
+    $default  reduce usando la regla 38 (seleccion)
 
 
 estado 94
 
-   28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion $@7 . PCOMA expresion $@8 C_C P_C
+   28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion . $@7 PCOMA expresion $@8 C_C P_C
+   49 expresion: expresion . $@14 OP_SURES $@15 termino
 
-    PCOMA  desplazar e ir al estado 95
+    OP_SURES  reduce usando la regla 47 ($@14)
+    $default  reduce usando la regla 26 ($@7)
+
+    $@7   ir al estado 95
+    $@14  ir al estado 57
 
 
 estado 95
+
+   28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion $@7 . PCOMA expresion $@8 C_C P_C
+
+    PCOMA  desplazar e ir al estado 96
+
+
+estado 96
 
    28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion $@7 PCOMA . expresion $@8 C_C P_C
 
@@ -1159,38 +1173,38 @@ estado 95
     AVERAGE     desplazar e ir al estado 20
 
     reglaaverage  ir al estado 38
-    expresion     ir al estado 96
+    expresion     ir al estado 97
     termino       ir al estado 42
     factor        ir al estado 43
 
 
-estado 96
-
-   28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion $@7 PCOMA expresion . $@8 C_C P_C
-   48 expresion: expresion . $@13 OP_SURES $@14 termino
-
-    OP_SURES  reduce usando la regla 46 ($@13)
-    $default  reduce usando la regla 27 ($@8)
-
-    $@8   ir al estado 97
-    $@13  ir al estado 57
-
-
 estado 97
 
-   28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion $@7 PCOMA expresion $@8 . C_C P_C
+   28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion $@7 PCOMA expresion . $@8 C_C P_C
+   49 expresion: expresion . $@14 OP_SURES $@15 termino
 
-    C_C  desplazar e ir al estado 98
+    OP_SURES  reduce usando la regla 47 ($@14)
+    $default  reduce usando la regla 27 ($@8)
+
+    $@8   ir al estado 98
+    $@14  ir al estado 57
 
 
 estado 98
 
-   28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion $@7 PCOMA expresion $@8 C_C . P_C
+   28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion $@7 PCOMA expresion $@8 . C_C P_C
 
-    P_C  desplazar e ir al estado 99
+    C_C  desplazar e ir al estado 99
 
 
 estado 99
+
+   28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion $@7 PCOMA expresion $@8 C_C . P_C
+
+    P_C  desplazar e ir al estado 100
+
+
+estado 100
 
    28 reglabetween: BETWEEN $@5 P_A expresion $@6 COMA C_A expresion $@7 PCOMA expresion $@8 C_C P_C .
 
