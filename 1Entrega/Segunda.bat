@@ -7,6 +7,7 @@ c:\GnuWin32\bin\bison -dyv Sintactico.y
 c:\MinGW\bin\gcc.exe lex.yy.c y.tab.c -o Segunda.exe
 Segunda.exe Prueba.txt
 pause
+pause
 del lex.yy.c
 del y.tab.c
 del y.output
